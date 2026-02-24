@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bridge (Stripe) &mdash; Valinor Partnership Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0f; color: #e0e0e8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; background: linear-gradient(135deg, #0ea5e9, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .meta { margin-top: 4px; font-size: 0.75rem; color: #666; }
+  .tabs { display: flex; gap: 0.4rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+  .tab { padding: 0.5rem 1rem; background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 8px; color: #aaa; cursor: pointer; font-size: 0.82rem; transition: all 0.2s; }
+  .tab:hover { border-color: #0ea5e9; color: #ddd; }
+  .tab.active { background: #0ea5e922; border-color: #0ea5e9; color: #7dd3fc; }
+  .section { display: none; background: #111118; border: 1px solid #2a2a4a; border-radius: 12px; padding: 1.5rem; }
+  .section.active { display: block; }
+  .section h2 { font-size: 1.2rem; margin-bottom: 0.4rem; color: #7dd3fc; }
+  .section .desc { color: #888; font-size: 0.82rem; margin-bottom: 1rem; }
+
+  /* Flow diagrams */
+  .flow { display: flex; flex-direction: column; align-items: center; gap: 0; padding: 1rem; background: #0d0d14; border-radius: 8px; overflow-x: auto; }
+  .flow-row { display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .node { padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.75rem; text-align: center; min-width: 140px; max-width: 240px; line-height: 1.4; }
+  .node b { display: block; font-size: 0.8rem; margin-bottom: 0.2rem; }
+  .node-blue { background: #0c1929; border: 1.5px solid #0ea5e9; color: #e0e0e8; }
+  .node-cyan { background: #001828; border: 1.5px solid #06b6d4; color: #e0e0e8; }
+  .node-amber { background: #2a1800; border: 1.5px solid #f59e0b; color: #e0e0e8; }
+  .node-green { background: #0a2818; border: 1.5px solid #10b981; color: #e0e0e8; }
+  .node-red { background: #2a0a0a; border: 1.5px solid #ef4444; color: #e0e0e8; }
+  .node-indigo { background: #1e1b4b; border: 1.5px solid #818cf8; color: #e0e0e8; }
+  .node-purple { background: #1a1040; border: 1.5px solid #a855f7; color: #e0e0e8; }
+  .node-gray { background: #1a1a2e; border: 1.5px solid #555; color: #ccc; }
+  .arrow { color: #0ea5e9; font-size: 0.7rem; text-align: center; padding: 0.3rem 0; }
+  .arrow-label { color: #999; font-size: 0.65rem; font-style: italic; }
+  .group-box { border: 1px dashed #444; border-radius: 10px; padding: 0.8rem; margin: 0.5rem 0; }
+  .group-box .group-label { font-size: 0.7rem; color: #888; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .conn { display: flex; flex-direction: column; align-items: center; }
+  .conn-line { width: 2px; height: 18px; background: #0ea5e966; }
+  .conn-arrow-down { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #0ea5e9; }
+
+  /* Info cards */
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-top: 1.2rem; }
+  .info-card { background: #12121c; border: 1px solid #2a2a4a; border-radius: 10px; padding: 1rem; }
+  .info-card h3 { font-size: 0.9rem; color: #0ea5e9; margin-bottom: 0.4rem; }
+  .info-card p, .info-card li { font-size: 0.8rem; color: #aaa; line-height: 1.5; }
+  .info-card ul { padding-left: 1.2rem; }
+  .info-card li { margin-bottom: 0.25rem; }
+  .code-block { background: #0d0d14; border: 1px solid #2a2a4a; border-radius: 6px; padding: 0.7rem; font-family: 'Courier New', monospace; font-size: 0.72rem; color: #7dd3fc; overflow-x: auto; margin-top: 0.4rem; white-space: pre; }
+
+  /* Badges */
+  .badge { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.68rem; font-weight: 600; }
+  .badge-red { background: #ef444433; color: #fca5a5; border: 1px solid #ef444455; }
+  .badge-amber { background: #f59e0b33; color: #fcd34d; border: 1px solid #f59e0b55; }
+  .badge-green { background: #10b98133; color: #6ee7b7; border: 1px solid #10b98155; }
+  .badge-blue { background: #0ea5e933; color: #7dd3fc; border: 1px solid #0ea5e955; }
+
+  /* Permissions */
+  .perm-container { display: flex; gap: 1.5rem; flex-wrap: wrap; padding: 1rem; background: #0d0d14; border-radius: 8px; }
+  .perm-column { flex: 1; min-width: 280px; }
+  .perm-column h4 { font-size: 0.78rem; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.6rem; padding-bottom: 0.3rem; border-bottom: 1px solid #333; }
+  .perm-node { padding: 0.6rem 0.8rem; border-radius: 8px; font-size: 0.72rem; margin-bottom: 0.5rem; line-height: 1.4; }
+  .perm-node b { display: block; font-size: 0.78rem; margin-bottom: 0.15rem; }
+  .perm-node .restrict { color: #ef4444; font-size: 0.68rem; }
+  .perm-arrow { text-align: center; color: #0ea5e9; font-size: 0.8rem; padding: 0.15rem 0; }
+  .perm-divider { width: 2px; background: #333; min-height: 100px; align-self: stretch; }
+
+  /* Security layers */
+  .sec-layers { display: flex; flex-direction: column; gap: 0; padding: 1rem; background: #0d0d14; border-radius: 8px; }
+  .sec-layer { display: flex; align-items: stretch; border-bottom: 1px solid #1a1a2e; }
+  .sec-layer:last-child { border-bottom: none; }
+  .sec-num { width: 50px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: #0ea5e9; flex-shrink: 0; }
+  .sec-content { flex: 1; padding: 0.6rem 0.8rem; }
+  .sec-content b { font-size: 0.78rem; color: #7dd3fc; }
+  .sec-content span { font-size: 0.72rem; color: #aaa; }
+
+  /* Callouts */
+  .callout { margin-top: 0.8rem; padding: 0.5rem; border-radius: 6px; }
+  .callout-blue { border: 1px dashed #0ea5e966; }
+  .callout-red { border: 1px dashed #ef444466; }
+  .callout-amber { border: 1px dashed #f59e0b66; }
+  .fee-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.8rem; }
+  .fee-table th { background: #1a1a2e; color: #0ea5e9; padding: 0.4rem; text-align: left; border-bottom: 1px solid #2a2a4a; }
+  .fee-table td { padding: 0.4rem; border-bottom: 1px solid #1a1a2e; color: #ccc; }
+  .callout-title { font-size: 0.72rem; font-weight: 600; margin-bottom: 0.15rem; }
+  .callout-text { font-size: 0.7rem; color: #aaa; }
+
+  /* Prose content */
+  .prose { font-size: 0.84rem; color: #ccc; line-height: 1.7; max-width: 900px; }
+  .prose h2 { font-size: 1.15rem; color: #7dd3fc; margin: 1.8rem 0 0.6rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #2a2a4a; }
+  .prose h2:first-child { margin-top: 0; }
+  .prose h3 { font-size: 0.95rem; color: #38bdf8; margin: 1.4rem 0 0.4rem 0; }
+  .prose p { margin-bottom: 0.8rem; }
+  .prose strong { color: #e0e0e8; }
+  .prose code { background: #0c1929; padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.78rem; color: #7dd3fc; }
+  .prose .highlight-box { background: #12121c; border: 1px solid #2a2a4a; border-radius: 8px; padding: 1rem; margin: 0.8rem 0; }
+  .prose .highlight-box p:last-child { margin-bottom: 0; }
+  .prose hr { border: none; border-top: 1px solid #2a2a4a; margin: 1.5rem 0; }
+  .prose .role-card { background: #12121c; border-radius: 8px; padding: 1rem; margin: 0.8rem 0; }
+  .prose .role-card.blue { border-left: 3px solid #0ea5e9; }
+  .prose .role-card.amber { border-left: 3px solid #f59e0b; }
+  .prose .role-card.green { border-left: 3px solid #10b981; }
+  .prose .role-card.red { border-left: 3px solid #ef4444; }
+  .prose .role-card.purple { border-left: 3px solid #a855f7; }
+  .prose .role-card.indigo { border-left: 3px solid #818cf8; }
+  .prose .can-do { color: #6ee7b7; font-size: 0.78rem; }
+  .prose .cant-do { color: #fca5a5; font-size: 0.78rem; }
+  .prose .fee-list { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 1rem; font-size: 0.82rem; margin: 0.5rem 0; }
+  .prose .fee-list .vol { color: #aaa; } .prose .fee-list .rate { color: #7dd3fc; font-weight: 600; }
+
+  /* Sequence table */
+  .seq { background: #0d0d14; border-radius: 8px; padding: 1rem; overflow-x: auto; }
+  .seq-table { width: 100%; min-width: 700px; border-collapse: collapse; }
+  .seq-table th { font-size: 0.72rem; color: #7dd3fc; padding: 0.5rem 0.3rem; border-bottom: 2px solid #333; text-align: center; }
+  .seq-table td { font-size: 0.68rem; padding: 0.25rem 0.3rem; vertical-align: top; text-align: center; color: #bbb; border-bottom: 1px solid #1a1a2e; }
+  .seq-step { background: #0c1929; padding: 0.3rem 0.6rem; border-radius: 4px; display: inline-block; font-size: 0.68rem; color: #7dd3fc; margin: 0.1rem 0; }
+  .seq-atomic { background: #0a1520; border: 1px solid #0ea5e944; border-radius: 6px; padding: 0.3rem; }
+  .seq-msg { color: #aaa; font-size: 0.65rem; }
+  .footer { text-align: center; padding: 1.5rem 0 1rem; color: #555; font-size: 0.72rem; border-top: 1px solid #1a1a2e; margin-top: 2rem; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Bridge (Stripe)</h1>
+  <p class="subtitle">Partnership Review &mdash; Stablecoin Infrastructure Platform</p>
+  <div class="meta">Prepared by Valinor Credit Team &middot; v1</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('overview')">Overview</button>
+    <button class="tab" onclick="showTab('architecture')">Platform Architecture</button>
+    <button class="tab" onclick="showTab('orchestration')">Orchestration Flow</button>
+    <button class="tab" onclick="showTab('issuance')">Issuance &amp; Open Issuance</button>
+    <button class="tab" onclick="showTab('security')">Security &amp; Compliance</button>
+    <button class="tab" onclick="showTab('custody')">Custody of Funds</button>
+    <button class="tab" onclick="showTab('comps')">Comps &amp; Competitors</button>
+    <button class="tab" onclick="showTab('roles')">Roles &amp; Access Control</button>
+  </div>
+
+
+  <!-- ============================================================
+     TAB 0: OVERVIEW (Non-Technical)
+     ============================================================ -->
+  <div id="overview" class="section active">
+    <h2>What Is Bridge?</h2>
+    <p class="desc">A non-technical overview for anyone &mdash; no crypto background required.</p>
+
+    <div class="prose">
+      <div class="highlight-box">
+        <p><strong>The one-sentence version:</strong> Bridge is a stablecoin infrastructure platform (acquired by Stripe for $1.1B) that lets any business move, store, convert, issue, and spend digital dollars through a single set of APIs &mdash; without needing to understand blockchains, manage wallets, or handle crypto compliance.</p>
+        <p>Think of it like a behind-the-scenes payments backbone. If Stripe made credit card payments invisible to developers, Bridge does the same thing for stablecoin payments. Your users never need to know they're using a blockchain.</p>
+      </div>
+
+      <h2>Why Does This Exist?</h2>
+      <p><strong>Problem 1: Moving money globally is slow and expensive.</strong> International wire transfers take days and cost $25&ndash;50+ per transaction. Card payments charge 2&ndash;3% interchange. Correspondent banking adds multiple middlemen. Trillions of dollars move inefficiently through pipes built decades ago.</p>
+      <p><strong>Problem 2: Stablecoins solve this, but are too hard to use.</strong> Stablecoins (USDC, USDT, etc.) already move $15+ trillion annually &mdash; settling in seconds for fractions of a penny. But integrating them requires blockchain expertise, wallet infrastructure, compliance tooling, and regulatory licensing that most businesses don't have.</p>
+      <p><strong>Bridge connects these two problems into a solution.</strong> It abstracts away every piece of blockchain complexity and presents stablecoins as just another payment rail &mdash; one that's faster, cheaper, and globally accessible. Developers write a few lines of code. Bridge handles the blockchains, custody, compliance, and conversion behind the scenes.</p>
+
+      <h2>What Can You Build With Bridge?</h2>
+      <p><strong>Send &amp; receive payments:</strong> Move funds globally using fiat rails, stablecoins, or both. On-ramps (fiat &rarr; crypto), off-ramps (crypto &rarr; fiat), and crypto-to-crypto transfers &mdash; all through one API.</p>
+      <p><strong>Virtual accounts:</strong> Instantly issue USD, EUR, and MXN deposit accounts for your users with local bank details (account/routing numbers, IBAN). Users fund via ACH, SEPA, or wire.</p>
+      <p><strong>Custodial wallets:</strong> Create and manage digital asset wallets at scale. Bridge handles on-chain security, gas management, key custody, and all technical complexity.</p>
+      <p><strong>Issue your own stablecoin:</strong> Launch a branded stablecoin in days via Open Issuance. Customize reserves (BlackRock, Fidelity, Superstate backing), earn rewards on reserves (3&ndash;4% from US Treasuries), and tap into shared liquidity across all Open Issuance coins.</p>
+      <p><strong>Issue cards:</strong> Visa-powered virtual and physical cards that spend directly from stablecoin balances. Available in Africa, Latin America, the US, with EU and APAC coming 2026. No cross-border fees when users transact locally.</p>
+
+      <h2>How Does a Typical Payment Work?</h2>
+      <div class="highlight-box">
+        <p><strong>Example: USD &rarr; USDC on-ramp</strong></p>
+        <p>1. Your user deposits USD via ACH to a Bridge-assigned virtual account &rarr; 2. Bridge receives the fiat and converts to USDC &rarr; 3. USDC is deposited to a Bridge-managed custodial wallet or sent to an external address &rarr; 4. Done. Your user sees a stablecoin balance. You see a webhook confirmation.</p>
+        <p>Or in reverse: user sends USDC &rarr; Bridge converts to EUR &rarr; Bridge sends EUR via SEPA to a European bank account. Cross-border payment settled in minutes instead of days.</p>
+      </div>
+
+      <h2>Who Uses It?</h2>
+      <p>Hundreds of companies building money movement experiences. Notable names include <strong>Phantom</strong> (15M+ user crypto wallet &mdash; launched CASH stablecoin on Bridge), <strong>MetaMask</strong> (mUSD stablecoin), <strong>Shopify</strong>, <strong>Klarna</strong>, <strong>Bitso</strong> (LATAM crypto exchange), <strong>DolarApp</strong> (digital dollar savings for LATAM), <strong>Airtm</strong> (aid &amp; gig platform payouts), <strong>Sendwave/WorldRemit</strong> (9M customers), and <strong>Starlink</strong> (repatriating Argentina sales).</p>
+
+      <h2>Who Built It?</h2>
+      <p><strong>Bridge</strong> was founded in 2022 by <strong>Zach Abrams</strong> (former Head of Consumer Products at Coinbase) and <strong>Sean Yu</strong> (former staff engineer at Airbnb). They previously co-founded Evenly, a Venmo competitor acquired by Block (Square) in 2013.</p>
+      <p><strong>Stripe acquired Bridge in February 2025 for $1.1 billion</strong> &mdash; its largest acquisition ever and the biggest M&amp;A deal in crypto history at the time. Bridge now operates as a division of Stripe, combining stablecoin infrastructure with Stripe's payment platform serving half the Fortune 100 ($1.4T in annual payment volume).</p>
+      <p>In June 2025, Stripe also acquired <strong>Privy</strong>, a wallet infrastructure startup, further expanding end-to-end digital asset capabilities.</p>
+
+      <h2>Regulatory Status</h2>
+      <p>Bridge Building Inc is a registered money services business &mdash; <strong>NMLS #2450917</strong> &mdash; with money transmitter licenses across US states. EU services are provided through <strong>Bridge Building Sp. Z.o.o.</strong> (Poland, KRS: 0001039515). Card issuance is through <strong>Lead Bank</strong> (Visa partner). Open Issuance stablecoins are designed to be <strong>GENIUS Act-ready</strong> from day one.</p>
+
+      <h2>The Big Picture</h2>
+      <p>Bridge's thesis: stablecoins will become the default settlement layer for global commerce &mdash; invisible to end users, but dramatically faster and cheaper than existing rails. The analogy: Stripe made credit card payments invisible to developers in 2010. Bridge (inside Stripe) is doing the same for stablecoin payments in 2025. Within one week of enabling stablecoin payments, Stripe processed transactions from 70+ countries &mdash; exceeding all Bitcoin payments it handled over 18 months in 2015&ndash;2016. Today, stablecoin payments flow from 120+ countries.</p>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+     TAB 1: PLATFORM ARCHITECTURE
+     ============================================================ -->
+  <div id="architecture" class="section">
+    <h2>Platform Architecture</h2>
+    <p class="desc">The five core modules of the Bridge developer platform and how they interconnect.</p>
+
+    <div class="flow">
+      <div class="node node-gray"><b>Your Application</b>REST API calls over HTTPS<br>Api-Key header auth</div>
+      <div class="conn"><div class="conn-line"></div></div>
+      <div class="arrow"><span class="arrow-label">API calls + Webhook callbacks</span></div>
+      <div class="conn"><div class="conn-arrow-down"></div></div>
+
+      <div class="group-box" style="border-color:#0ea5e955; max-width:900px; width:100%;">
+        <div class="group-label" style="color:#0ea5e9;">Bridge Platform &mdash; Stripe Infrastructure</div>
+        <div class="flow-row" style="gap:0.8rem;">
+          <div class="node node-blue" style="min-width:150px;"><b>Customers</b>KYC/KYB onboarding<br>Identity lifecycle<br>Endorsement checks</div>
+          <div class="node node-blue" style="min-width:150px;"><b>Orchestration</b>Transfers, virtual accounts<br>Liquidation addresses<br>Prefunded accounts<br>FX conversion</div>
+          <div class="node node-green" style="min-width:150px;"><b>Wallets</b>Custodial wallets<br>Key management<br>Gas abstraction<br>Balance queries</div>
+          <div class="node node-amber" style="min-width:150px;"><b>Issuance</b>Open Issuance platform<br>USDB / Custom coins<br>Reserve management<br>Mint &amp; burn</div>
+          <div class="node node-purple" style="min-width:150px;"><b>Cards</b>Visa card issuing<br>Virtual &amp; physical<br>Apple/Google Pay<br>Interchange revenue</div>
+        </div>
+      </div>
+
+      <div class="conn"><div class="conn-line"></div></div>
+      <div class="arrow"><span class="arrow-label">Settlement &amp; custody</span></div>
+      <div class="conn"><div class="conn-arrow-down"></div></div>
+
+      <div class="flow-row" style="gap:1.5rem; margin-top:0.3rem;">
+        <div style="text-align:center;">
+          <div class="group-box" style="border-color:#06b6d455;">
+            <div class="group-label" style="color:#06b6d4;">Blockchain Networks</div>
+            <div class="flow-row" style="gap:0.5rem;">
+              <div class="node node-cyan" style="min-width:80px;"><b>Ethereum</b></div>
+              <div class="node node-cyan" style="min-width:80px;"><b>Solana</b></div>
+              <div class="node node-cyan" style="min-width:80px;"><b>Base</b></div>
+              <div class="node node-cyan" style="min-width:80px;"><b>Polygon</b></div>
+              <div class="node node-cyan" style="min-width:80px;"><b>Others</b></div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;">
+          <div class="group-box" style="border-color:#10b98155;">
+            <div class="group-label" style="color:#10b981;">Fiat Rails</div>
+            <div class="flow-row" style="gap:0.5rem;">
+              <div class="node node-green" style="min-width:80px;"><b>ACH</b></div>
+              <div class="node node-green" style="min-width:80px;"><b>Wire</b></div>
+              <div class="node node-green" style="min-width:80px;"><b>SEPA</b></div>
+              <div class="node node-green" style="min-width:80px;"><b>PIX</b></div>
+              <div class="node node-green" style="min-width:80px;"><b>SPEI</b></div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;">
+          <div class="group-box" style="border-color:#f59e0b55;">
+            <div class="group-label" style="color:#f59e0b;">Reserve Partners</div>
+            <div class="flow-row" style="gap:0.5rem;">
+              <div class="node node-amber" style="min-width:90px;"><b>BlackRock</b></div>
+              <div class="node node-amber" style="min-width:90px;"><b>Fidelity</b></div>
+              <div class="node node-amber" style="min-width:90px;"><b>Superstate</b></div>
+              <div class="node node-amber" style="min-width:90px;"><b>Lead Bank</b>Cash reserves</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>API Design Principles</h3>
+        <p><strong>RESTful over HTTPS</strong> &mdash; all requests must use HTTPS; plain HTTP is rejected. Authentication via <code>Api-Key</code> header (HTTP Basic Auth, no username/password). Keys are shown only once at creation. Supports <strong>idempotency keys</strong> for safe retries. Paginated responses for list endpoints.</p>
+        <div class="code-block">curl -X GET 'https://api.bridge.xyz/v0/customers' \
+  -H 'Content-Type: application/json' \
+  -H 'Api-Key: &lt;your-api-key&gt;'</div>
+      </div>
+      <div class="info-card">
+        <h3>Environments</h3>
+        <p><strong>Production:</strong> <code>api.bridge.xyz</code> &mdash; live money movement, real compliance checks.</p>
+        <p><strong>Sandbox:</strong> Full test environment. API keys are scoped to individual developer accounts (not shared across org). Simulates KYC flows, transfers, and webhooks without moving real funds.</p>
+      </div>
+      <div class="info-card">
+        <h3>Webhook System</h3>
+        <p>Bridge pushes real-time event notifications for: transfer state changes, customer KYC status updates, card transactions, wallet deposits, virtual account activity. Webhooks are configurable via API or dashboard. Essential for async flows like ACH settlement (which takes 1&ndash;3 business days).</p>
+      </div>
+      <div class="info-card">
+        <h3>Supported Currencies</h3>
+        <p><strong>Fiat:</strong> USD, EUR, MXN, BRL, ARS, GBP, and others via local rails.</p>
+        <p><strong>Stablecoins:</strong> USDC, USDT, PYUSD, USDB (Bridge native), and any Open Issuance coin. Also supports BTC conversion.</p>
+        <p><strong>Payment rails:</strong> ACH, Wire, SEPA, PIX, SPEI + on-chain transfers across multiple blockchains.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+     TAB 2: ORCHESTRATION FLOW
+     ============================================================ -->
+  <div id="orchestration" class="section">
+    <h2>Orchestration &mdash; Money Movement Flow</h2>
+    <p class="desc">How Bridge moves money from point A to point B across fiat and stablecoin rails. Orchestration is the core of the platform.</p>
+
+    <div class="seq">
+      <table class="seq-table">
+        <thead><tr><th style="width:5%;">#</th><th style="width:14%;">From</th><th style="width:6%;"></th><th style="width:14%;">To</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Your App</td><td>&rarr;</td><td>Bridge API</td><td style="text-align:left;"><span class="seq-step">POST /v0/customers</span><br><span class="seq-msg">Create customer, trigger KYC/KYB. Provide identity docs, address, TOS acceptance.</span></td></tr>
+          <tr><td>2</td><td>Bridge</td><td>&rarr;</td><td>Your App</td><td style="text-align:left;"><span class="seq-step">Webhook: customer.updated</span><br><span class="seq-msg">KYC status &rarr; approved. Endorsements checked (base, transfers, wallets, cards).</span></td></tr>
+          <tr><td>3</td><td>Your App</td><td>&rarr;</td><td>Bridge API</td><td style="text-align:left;"><span class="seq-step">POST /v0/transfers</span><br><span class="seq-msg">Specify: source currency/rail, destination currency/rail, amount, on_behalf_of customer.</span></td></tr>
+          <tr><td colspan="5" style="padding:0.5rem;"><div class="seq-atomic">
+            <div style="text-align:center; color:#0ea5e9; font-size:0.72rem; font-weight:600; margin-bottom:0.3rem;">BRIDGE PROCESSES &mdash; Compliance, Conversion, Settlement</div>
+            <table class="seq-table" style="margin:0;"><tbody>
+              <tr><td style="width:5%;">4</td><td style="width:14%;">Bridge</td><td style="width:6%;"></td><td style="width:14%;">Compliance</td><td style="text-align:left;"><span class="seq-step">KYC/AML screening</span> <span class="seq-msg">Sanctions lists, Travel Rule data, transaction monitoring</span></td></tr>
+              <tr><td>5</td><td>Bridge</td><td>&rarr;</td><td>FX Engine</td><td style="text-align:left;"><span class="seq-step">Exchange rate lock</span> <span class="seq-msg">Real-time rates for fiat&harr;stablecoin conversion. Supports reverse rates (EUR&rarr;USD, MXN&rarr;USD).</span></td></tr>
+              <tr><td>6</td><td>Source Rail</td><td>&rarr;</td><td>Bridge</td><td style="text-align:left;"><span class="seq-msg">Receive funds: ACH debit, SEPA credit, on-chain stablecoin deposit, or prefunded balance</span></td></tr>
+              <tr><td>7</td><td>Bridge</td><td>&rarr;</td><td>Dest Rail</td><td style="text-align:left;"><span class="seq-msg">Deliver funds: mint/transfer stablecoin on-chain, or send fiat via ACH/Wire/SEPA/PIX</span></td></tr>
+            </tbody></table>
+          </div></td></tr>
+          <tr><td>8</td><td>Bridge</td><td>&rarr;</td><td>Your App</td><td style="text-align:left;"><span class="seq-step">Webhook: transfer.updated</span> <span class="seq-msg">Status: payment_processed &rarr; completed. Includes amounts, fees, receipt URL.</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Transfers</h3>
+        <p>One-time fiat or stablecoin transfers. Convert from source currency to destination currency (e.g. USDC &rarr; EUR, BTC &rarr; USD, USD &rarr; USDC). Supports on-ramps, off-ramps, and crypto-to-crypto flows. Transfers can originate from customer deposits, Bridge-managed wallets, or prefunded accounts.</p>
+      </div>
+      <div class="info-card">
+        <h3>Static Template Transfers</h3>
+        <p>Reusable payment instructions for recurring transfers. A static template provides persistent deposit instructions. When funds arrive, Bridge auto-matches to the template and creates a new transfer instance. Ideal for recurring payroll or treasury operations.</p>
+      </div>
+      <div class="info-card">
+        <h3>Virtual Accounts</h3>
+        <p>Fiat deposit addresses with real bank details (account/routing numbers for ACH, IBAN for SEPA). Each address is tied to a specific customer for reconciliation. Supported currencies: USD, EUR, MXN. Users can receive traditional bank transfers that Bridge automatically converts.</p>
+      </div>
+      <div class="info-card">
+        <h3>Prefunded Accounts</h3>
+        <p>Preload funds to a Bridge-managed balance and use it for instant fiat off-ramps without waiting for deposit settlement. In practice, a prefunded account is a Bridge wallet configured for <code>on_behalf_of</code> off-ramps. Critical for payroll scenarios: one liquidity wallet dispersing ACH to many employees.</p>
+      </div>
+      <div class="info-card">
+        <h3>Liquidation Addresses</h3>
+        <p>Link a blockchain address to a mapped fiat or crypto destination. When crypto arrives at this address, Bridge auto-converts and forwards to the final destination. Set-and-forget automation for recurring crypto-to-fiat conversion.</p>
+      </div>
+      <div class="info-card">
+        <h3>Fees &amp; Precision</h3>
+        <p>Bridge does not charge FX markups or cross-border fees on card transactions where the user transacts locally. Transfer fees are transparent and configurable. All monetary values use <strong>string-based precision</strong> to avoid floating-point rounding errors. Monthly invoices available in the dashboard.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+     TAB 3: ISSUANCE & OPEN ISSUANCE
+     ============================================================ -->
+  <div id="issuance" class="section">
+    <h2>Stablecoin Issuance &amp; Open Issuance</h2>
+    <p class="desc">How businesses launch, manage, and earn from their own branded stablecoins using Bridge's infrastructure.</p>
+
+    <div class="flow">
+      <div class="node node-gray"><b>Business (Issuer)</b>Wants to launch own stablecoin</div>
+      <div class="conn"><div class="conn-line"></div></div>
+      <div class="arrow"><span class="arrow-label">Configure via Bridge API / Dashboard</span></div>
+      <div class="conn"><div class="conn-arrow-down"></div></div>
+
+      <div class="group-box" style="border-color:#f59e0b55; max-width:700px; width:100%;">
+        <div class="group-label" style="color:#f59e0b;">Open Issuance Platform</div>
+        <div class="flow-row" style="gap:0.8rem;">
+          <div class="node node-amber" style="min-width:140px;"><b>Coin Configuration</b>Blockchain selection<br>Smart contract features<br>Brand &amp; naming<br>Open/closed loop</div>
+          <div class="node node-amber" style="min-width:140px;"><b>Reserve Management</b>Cash (Lead Bank)<br>Treasuries (BlackRock,<br>Fidelity, Superstate)<br>Custom allocation mix</div>
+          <div class="node node-amber" style="min-width:140px;"><b>Liquidity Network</b>1:1 interoperability<br>with all Open Issuance<br>coins. No isolated<br>liquidity pools.</div>
+        </div>
+      </div>
+
+      <div class="conn"><div class="conn-line"></div></div>
+      <div class="conn"><div class="conn-arrow-down"></div></div>
+
+      <div class="flow-row" style="gap:1.5rem;">
+        <div class="node node-green"><b>Onramps</b>Fiat &rarr; your coin<br>via Bridge + Stripe</div>
+        <div class="node node-green"><b>Offramps</b>Your coin &rarr; fiat<br>or other stablecoins</div>
+        <div class="node node-purple"><b>Wallets</b>Custodial wallets<br>hold your coin</div>
+        <div class="node node-purple"><b>Cards</b>Visa cards spend<br>directly from balance</div>
+        <div class="node node-blue"><b>Rewards</b>3&ndash;4% from reserves<br>Configurable incentives</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>USDB &mdash; Bridge's Native Stablecoin</h3>
+        <p>USDB is Bridge's own USD-pegged stablecoin, designed for developers. Programmable, secure, with rewards built in. Businesses earn reserve yield for holding USDB balances. Used as default settlement coin across Stripe Stablecoin Financial Accounts (available in 101 countries).</p>
+      </div>
+      <div class="info-card">
+        <h3>Custom Stablecoins via Open Issuance</h3>
+        <p>Launch a fully branded stablecoin in days, not months. Bridge handles: reserve management, security, GENIUS Act compliance, liquidity, and mint/burn infrastructure. Issuers customize: blockchain support, smart contract features, reserve allocation (cash vs. Treasuries ratio), and reward distribution.</p>
+      </div>
+      <div class="info-card">
+        <h3>Shared Liquidity Network</h3>
+        <p>The key innovation: all Open Issuance stablecoins are <strong>interoperable 1:1</strong> with each other. Phantom's CASH can swap instantly for USDH (Hyperliquid) or mUSD (MetaMask) &mdash; on-chain, permissionless, no intermediary. New coins launch into existing liquidity instead of starting from zero.</p>
+      </div>
+      <div class="info-card">
+        <h3>Revenue Model for Issuers</h3>
+        <p><strong>Reserve rewards:</strong> Reserves are invested in US Treasuries and cash equivalents earning 3&ndash;4%. Rewards flow to the issuer for originating the stablecoin. <strong>Interchange:</strong> If paired with Bridge Cards, every card swipe generates interchange revenue. <strong>No burn fees:</strong> Enterprises don't pay to redeem their own stablecoin.</p>
+      </div>
+      <div class="info-card">
+        <h3>Live Open Issuance Coins</h3>
+        <p><strong>CASH</strong> (Phantom) &mdash; 15M+ user wallet, consumer spending &amp; DeFi. <strong>USDH</strong> (Native Markets / Hyperliquid). <strong>mUSD</strong> (MetaMask). Plus coins from Dakota, Slash, Lava, and Takenos. All interoperable within the network.</p>
+      </div>
+      <div class="info-card">
+        <h3>GENIUS Act Readiness</h3>
+        <p>All Open Issuance coins are designed for compliance with the GENIUS Act (first US federal stablecoin law). Bridge handles: full reserve backing attestations, AML/KYC integration, transparent reserve reporting, and regulatory licensing. Issuers don't carry additional regulatory burden.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+     TAB 4: SECURITY & COMPLIANCE
+     ============================================================ -->
+  <div id="security" class="section">
+    <h2>Security Model &amp; Compliance Framework</h2>
+    <p class="desc">Multi-layer security architecture spanning API access, custody, compliance, and infrastructure.</p>
+
+    <div class="sec-layers">
+      <div class="sec-layer">
+        <div class="sec-num">1</div>
+        <div class="sec-content">
+          <b>API Security</b><br>
+          <span>All requests over HTTPS (HTTP rejected). API key authentication via <code>Api-Key</code> header. Keys shown once at creation, never retrievable. Sandbox keys scoped per developer (not org-shared). Idempotency keys for safe retry of non-idempotent operations. Rate limiting and abuse detection.</span>
+        </div>
+      </div>
+      <div class="sec-layer">
+        <div class="sec-num">2</div>
+        <div class="sec-content">
+          <b>Custody &amp; Key Management</b><br>
+          <span>Custodial wallets use Hardware Security Modules (HSMs) or multi-party computation (MPC) for private key protection. No single point of failure. Bridge manages gas fees, nonce handling, and transaction signing. Businesses never touch private keys. Institutional-grade custody infrastructure inherited from Stripe's security posture.</span>
+        </div>
+      </div>
+      <div class="sec-layer">
+        <div class="sec-num">3</div>
+        <div class="sec-content">
+          <b>KYC / KYB &amp; Identity</b><br>
+          <span>Built-in customer onboarding with <strong>endorsement-based</strong> identity lifecycle. Customers must pass KYC (individuals) or KYB (businesses) before accessing services. Endorsements unlock specific capabilities: <code>base</code> (account creation), <code>transfers</code> (money movement), <code>wallets</code> (custody), <code>cards</code> (card issuing). Missing requirements surfaced via API (e.g., proof of address requests). KYC Links allow white-labeled onboarding flows.</span>
+        </div>
+      </div>
+      <div class="sec-layer">
+        <div class="sec-num">4</div>
+        <div class="sec-content">
+          <b>AML &amp; Transaction Monitoring</b><br>
+          <span>Real-time sanctions screening against OFAC and international lists. Transaction monitoring for suspicious patterns. Travel Rule compliance (sender/receiver information exchange for qualifying transfers). Configurable compliance frameworks that adapt to new regulations without breaking user experience.</span>
+        </div>
+      </div>
+      <div class="sec-layer">
+        <div class="sec-num">5</div>
+        <div class="sec-content">
+          <b>Reserve Security (Issuance)</b><br>
+          <span>Stablecoin reserves held by regulated financial institutions: <strong>BlackRock, Fidelity Investments, Superstate</strong> (US Treasuries), and <strong>Lead Bank</strong> (cash). Full reserve backing &mdash; every coin is redeemable 1:1. Regular attestations. Reserve allocation is configurable per stablecoin (cash/Treasury mix). Designed for GENIUS Act compliance.</span>
+        </div>
+      </div>
+      <div class="sec-layer">
+        <div class="sec-num">6</div>
+        <div class="sec-content">
+          <b>Card Security</b><br>
+          <span>Visa network security standards. Virtual cards with instant provisioning. Push provisioning to Apple Pay and Google Pay. Programmable transaction controls and custom fees. Card programs leverage Bridge and Stripe's combined compliance, fraud detection, and bank/network relationships.</span>
+        </div>
+      </div>
+      <div class="sec-layer">
+        <div class="sec-num">7</div>
+        <div class="sec-content">
+          <b>Regulatory Licensing</b><br>
+          <span><strong>Bridge Building Inc</strong> &mdash; NMLS #2450917, money transmitter licenses across US states. <strong>Bridge Building Sp. Z.o.o.</strong> &mdash; Poland (KRS: 0001039515, RDWW-794) for EEA services. Card issuance through <strong>Lead Bank</strong> (FDIC insured). Not a bank itself &mdash; operates as licensed financial infrastructure.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Endorsement System (KYC Tiers)</h3>
+        <p>Bridge uses an "endorsement" model where each customer capability requires specific approval. A customer response includes an <code>endorsements</code> array showing status (<code>approved</code>, <code>incomplete</code>, <code>rejected</code>) and missing requirements. This allows progressive onboarding: basic account &rarr; transfers &rarr; wallets &rarr; cards.</p>
+        <div class="code-block">{
+  "endorsements": [
+    {
+      "name": "base",
+      "status": "approved"
+    },
+    {
+      "name": "transfers",
+      "status": "incomplete",
+      "requirements": {
+        "missing": {
+          "all_of": ["proof_of_address"]
+        }
+      }
+    }
+  ]
+}</div>
+      </div>
+      <div class="info-card">
+        <h3>Crypto Return Policies</h3>
+        <p>When crypto deposits require refund but no return policy is configured, Bridge marks them <code>missing_return_policy</code>. Configure a return policy via API or dashboard, and Bridge auto-initiates refund to sender's original address. Prevents funds from being stuck in limbo.</p>
+      </div>
+      <div class="info-card">
+        <h3>Reconciliation &amp; Audit Trail</h3>
+        <p>Every movement is recorded on-chain and mirrored in the orchestration layer. Automatic reconciliation between on-chain and off-chain ledgers. Timestamped history for all virtual accounts, static memos, transfers, and wallet activity. Receipt URLs generated per transfer for downstream auditing.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+     TAB 5: CUSTODY OF FUNDS
+     ============================================================ -->
+  <div id="custody" class="section">
+    <h2>Custody of Funds &mdash; Who Holds What, When</h2>
+    <p class="desc">How customer funds flow through Bridge's custody model, when Bridge is custodian vs. when funds leave Bridge's control, and the path toward qualified custodian status.</p>
+
+    <div class="prose">
+      <div class="highlight-box">
+        <p><strong>Key principle:</strong> Bridge operates a <strong>custodial model</strong>. When funds are held in Bridge-managed wallets or stablecoin financial accounts, <strong>Bridge (a Stripe company) acts as the custodian</strong> of your stablecoin balance. Fiat funds in transit are held by banking partners (Lead Bank). Stablecoin reserves are held by independent financial institutions (BlackRock, Fidelity, Superstate). Bridge is <strong>not currently a qualified custodian</strong> under SEC or banking definitions &mdash; but is actively pursuing that status via an OCC national trust bank charter.</p>
+      </div>
+
+      <h2>Fund Lifecycle &mdash; Where Money Sits at Each Stage</h2>
+
+      <div class="role-card blue">
+        <h3>Stage 1: Fiat Deposit (User &rarr; Bridge)</h3>
+        <p>When a user deposits USD via ACH, wire, or SEPA into a Bridge virtual account, the fiat is received into <strong>Bridge Building Inc's bank accounts</strong> held at partner banks (Lead Bank and others). At this stage, fiat funds are held by the banking partner on behalf of Bridge.</p>
+        <p class="can-do" style="margin-top:0.4rem;">Custody: <strong>Banking partner</strong> (Lead Bank) &mdash; FDIC-insured up to standard limits on the bank's balance sheet</p>
+        <p class="cant-do">Not yet on-chain. Not yet in user's wallet. Bridge is the money transmitter facilitating the transfer.</p>
+      </div>
+
+      <div class="role-card blue">
+        <h3>Stage 2: Conversion &amp; Wallet Deposit (Bridge Processing)</h3>
+        <p>Bridge converts fiat to stablecoins (USDC, USDB, or a custom Open Issuance coin) and deposits them into a <strong>Bridge-managed custodial wallet</strong>. Bridge directly states: "Bridge (a Stripe company) acts as the custodian of your stablecoin balance."</p>
+        <p class="can-do" style="margin-top:0.4rem;">Custody: <strong>Bridge</strong> &mdash; holds stablecoin balances in custodial wallets using HSM/MPC key management. Private keys are managed by Bridge; users never touch them.</p>
+        <p style="margin-top:0.4rem; font-size:0.78rem; color:#aaa;"><strong>USDB specifics:</strong> Balances held as USDB are always backed 1:1 by cash and short-duration money market funds managed by BlackRock. The stablecoin sits in Bridge's custody; the reserves sit at BlackRock.</p>
+      </div>
+
+      <div class="role-card green">
+        <h3>Stage 3: User Holds Balance (Steady State)</h3>
+        <p>While funds sit in a Bridge custodial wallet or Stripe Stablecoin Financial Account, <strong>Bridge is the custodian</strong>. Users can view balances, send, receive, and spend (via cards), but they do not hold private keys.</p>
+        <p class="can-do" style="margin-top:0.4rem;">Custody: <strong>Bridge</strong> &mdash; custodial control. Stripe's legal terms explicitly state: "Stripe does not convert, hold custody of, or transfer any Stablecoin as a component of the Stablecoin FA Services" &mdash; that function is performed by the "SFA Settlement Services Provider," which is <strong>Bridge Building Inc</strong>.</p>
+        <p style="margin-top:0.4rem; font-size:0.78rem; color:#aaa;">The legal distinction matters: Stripe facilitates the transfer of funds from your Stripe Account to Bridge Building Inc. Bridge Building Inc is the entity that actually custodies the stablecoins.</p>
+      </div>
+
+      <div class="role-card amber">
+        <h3>Stage 4: Withdrawal / Off-ramp (Bridge &rarr; User)</h3>
+        <p>When a user withdraws to an external crypto wallet or off-ramps to fiat, <strong>funds leave Bridge's custody</strong>.</p>
+        <p class="can-do" style="margin-top:0.4rem;">Crypto withdrawal: Stablecoins transfer to user's external wallet address. Custody transfers to the user (or their self-custodial wallet provider).</p>
+        <p class="can-do">Fiat off-ramp: Bridge converts stablecoins &rarr; fiat and sends via ACH/Wire/SEPA to user's bank. Custody transfers to the receiving bank.</p>
+        <p class="cant-do" style="margin-top:0.4rem;">Once funds leave Bridge's system, Bridge has no further custody or control.</p>
+      </div>
+
+      <h2>Is Bridge a Qualified Custodian?</h2>
+
+      <div class="role-card red">
+        <h3>Current Status: No &mdash; But Actively Pursuing Federal Charter</h3>
+        <p><strong>Today,</strong> Bridge Building Inc operates as a registered <strong>Money Services Business (NMLS #2450917)</strong> with state money transmitter licenses. This is <em>not</em> the same as a "qualified custodian" under SEC Investment Advisers Act rules (Rule 206(4)-2), which requires a bank, broker-dealer, or trust company charter.</p>
+        <p style="margin-top:0.8rem;"><strong>In progress:</strong> On <strong>February 17, 2026</strong>, Bridge received <strong>conditional approval from the OCC (Office of the Comptroller of the Currency)</strong> to form <strong>Bridge National Trust Bank</strong> &mdash; a federally chartered national trust bank. If finalized, this charter would authorize Bridge to:</p>
+        <p class="can-do" style="margin-top:0.4rem;">&bull; Custody digital assets under direct federal supervision</p>
+        <p class="can-do">&bull; Issue stablecoins as a federally regulated institution</p>
+        <p class="can-do">&bull; Manage reserves with federal banking safeguards</p>
+        <p class="can-do">&bull; Operate orchestration and settlement services under OCC oversight</p>
+        <p style="margin-top:0.8rem; font-size:0.78rem; color:#aaa;"><strong>Important limitations:</strong> A national trust bank charter is <em>not</em> a full-service commercial bank charter. Bridge would <em>not</em> be able to: accept demand deposits, offer checking/savings accounts, make commercial loans, or access FDIC deposit insurance. It is limited to fiduciary functions: custody, issuance, reserve management, and settlement.</p>
+        <p style="margin-top:0.8rem; font-size:0.78rem; color:#aaa;"><strong>Timeline:</strong> The OCC has not announced when final approval will be granted. Bridge is the 6th crypto firm to receive conditional OCC trust charter approval, following Circle, Ripple, BitGo, Fidelity Digital Assets, and Paxos (all approved Dec 2025).</p>
+      </div>
+
+      <h2>Comparison: Custody Models in Stablecoin Infrastructure</h2>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Bridge Custodial Wallets</h3>
+        <p><strong>Model:</strong> Fully custodial. Bridge manages keys via HSM/MPC. Users interact via API.</p>
+        <p><strong>Custody entity:</strong> Bridge Building Inc (today), Bridge National Trust Bank (pending OCC).</p>
+        <p><strong>Reserve backing:</strong> BlackRock, Fidelity, Superstate (Treasuries), Lead Bank (cash).</p>
+        <p><strong>Insurance:</strong> No FDIC on stablecoin balances. Fiat deposits at Lead Bank may have FDIC coverage on bank's balance sheet.</p>
+      </div>
+      <div class="info-card">
+        <h3>Privy Integration (Flexible Custody)</h3>
+        <p>Since Stripe acquired Privy (June 2025), Bridge integrates with Privy's <strong>flexible custody</strong> framework. Developers can choose: Bridge as custodian, self-custody for users, or third-party custodian. The custody model can adapt over time per user, per jurisdiction.</p>
+        <p style="margin-top:0.4rem; font-size:0.78rem; color:#aaa;">This means a developer using Bridge + Privy could start users in Bridge custody and migrate advanced users to self-custody &mdash; without rebuilding the product.</p>
+      </div>
+      <div class="info-card">
+        <h3>Reserve Segregation</h3>
+        <p>Stablecoin reserves are <strong>not held by Bridge</strong>. They are held by independent, regulated financial institutions (BlackRock, Fidelity, Superstate for Treasuries; Lead Bank for cash). This provides bankruptcy remoteness: if Bridge were to fail, reserves would still be accessible through the reserve partners.</p>
+        <p style="margin-top:0.4rem; font-size:0.78rem; color:#aaa;">USDB reserves specifically: 100% backed by cash and short-duration money market funds with BlackRock.</p>
+      </div>
+      <div class="info-card">
+        <h3>Key Risk: Custodial Gap</h3>
+        <p>Until the OCC charter is finalized, Bridge operates as a <strong>money transmitter, not a bank or trust company</strong>. This means:</p>
+        <p style="margin-top:0.4rem;">&bull; No FDIC insurance on stablecoin balances</p>
+        <p>&bull; Not a "qualified custodian" under SEC rules for investment advisers</p>
+        <p>&bull; Institutional clients with fiduciary obligations may face compliance questions about using Bridge for custody</p>
+        <p style="margin-top:0.4rem;">The OCC charter would close this gap if finalized.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+     TAB 6: COMPS & COMPETITORS
+     ============================================================ -->
+  <div id="comps" class="section">
+    <h2>Competitive Landscape &amp; Comparables</h2>
+    <p class="desc">How Bridge compares to other stablecoin infrastructure providers across issuance, orchestration, custody, and payments.</p>
+
+    <div class="prose">
+      <div class="highlight-box">
+        <p><strong>Market context:</strong> The stablecoin market passed $300B in circulation in 2025, with ~$33T in transaction volume. The infrastructure layer is rapidly consolidating, with Stripe/Bridge, Coinbase, Circle, and Paxos emerging as the major full-stack platforms, while specialist players (Brale, Bastion, BVNK, Zero Hash) compete on specific niches.</p>
+      </div>
+    </div>
+
+    <div class="seq">
+      <table class="seq-table" style="min-width:1000px;">
+        <thead>
+          <tr>
+            <th style="width:12%; text-align:left;">Company</th>
+            <th style="width:11%;">Orchestration</th>
+            <th style="width:11%;">Issuance</th>
+            <th style="width:11%;">Custody</th>
+            <th style="width:11%;">Cards</th>
+            <th style="width:11%;">Regulatory</th>
+            <th style="width:11%;">Chain Breadth</th>
+            <th style="width:22%; text-align:left;">Key Differentiator</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align:left;"><span class="seq-step">Bridge / Stripe</span></td>
+            <td><span class="badge badge-green">Full</span></td>
+            <td><span class="badge badge-green">Open Issuance</span></td>
+            <td><span class="badge badge-amber">MTL + OCC pending</span></td>
+            <td><span class="badge badge-green">Visa</span></td>
+            <td><span class="badge badge-amber">NMLS + OCC conditional</span></td>
+            <td><span class="badge badge-amber">Select (ETH, SOL, Base, Polygon)</span></td>
+            <td style="text-align:left; font-size:0.65rem; color:#aaa;">Stripe distribution (half Fortune 100). Shared liquidity network. End-to-end platform.</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><span class="seq-step">Circle</span></td>
+            <td><span class="badge badge-green">Circle Mint</span></td>
+            <td><span class="badge badge-green">USDC / EURC</span></td>
+            <td><span class="badge badge-green">OCC charter</span></td>
+            <td><span class="badge badge-red">No</span></td>
+            <td><span class="badge badge-green">OCC + MiCA + state MTLs</span></td>
+            <td><span class="badge badge-green">16+ chains</span></td>
+            <td style="text-align:left; font-size:0.65rem; color:#aaa;">$73B USDC dominance. Deepest institutional trust. Public company. No white-label issuance.</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><span class="seq-step">Paxos</span></td>
+            <td><span class="badge badge-amber">Limited</span></td>
+            <td><span class="badge badge-green">USDP / PYUSD / USDG</span></td>
+            <td><span class="badge badge-green">OCC charter + NYDFS trust</span></td>
+            <td><span class="badge badge-red">No</span></td>
+            <td><span class="badge badge-green">OCC + NYDFS + MAS</span></td>
+            <td><span class="badge badge-amber">ETH, SOL</span></td>
+            <td style="text-align:left; font-size:0.65rem; color:#aaa;">Issues PayPal's PYUSD. Strongest regulatory moat (NYDFS + OCC + Singapore MAS). Enterprise white-label.</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><span class="seq-step">Bastion</span></td>
+            <td><span class="badge badge-amber">On/off-ramps</span></td>
+            <td><span class="badge badge-green">White-label</span></td>
+            <td><span class="badge badge-green">NYDFS trust charter</span></td>
+            <td><span class="badge badge-amber">Planned</span></td>
+            <td><span class="badge badge-green">NYDFS trust + state MTLs</span></td>
+            <td><span class="badge badge-amber">Multi-chain (fewer)</span></td>
+            <td style="text-align:left; font-size:0.65rem; color:#aaa;">NYDFS trust charter = existing qualified custodian. Sony Bank partnership. $40M+ funded. Best for banks.</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><span class="seq-step">Brale</span></td>
+            <td><span class="badge badge-green">Full</span></td>
+            <td><span class="badge badge-green">Instant provisioning</span></td>
+            <td><span class="badge badge-amber">MTLs (via BitGo)</span></td>
+            <td><span class="badge badge-red">No (partner: Rain)</span></td>
+            <td><span class="badge badge-amber">State MTLs</span></td>
+            <td><span class="badge badge-green">20+ chains (broadest)</span></td>
+            <td style="text-align:left; font-size:0.65rem; color:#aaa;">Broadest chain support. 10,000+ swap variations. Developer-first. Dwolla founder. Best for protocols/L1s.</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><span class="seq-step">Zero Hash</span></td>
+            <td><span class="badge badge-green">Full</span></td>
+            <td><span class="badge badge-amber">Third-party</span></td>
+            <td><span class="badge badge-green">Regulated custodian</span></td>
+            <td><span class="badge badge-red">No</span></td>
+            <td><span class="badge badge-green">50-state MTLs + trust charters</span></td>
+            <td><span class="badge badge-amber">Select</span></td>
+            <td style="text-align:left; font-size:0.65rem; color:#aaa;">B2B crypto-as-a-service. Powers Stripe's earlier crypto features. Regulated custodian. All 50 states.</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><span class="seq-step">BVNK</span></td>
+            <td><span class="badge badge-green">Full</span></td>
+            <td><span class="badge badge-red">No</span></td>
+            <td><span class="badge badge-amber">Third-party</span></td>
+            <td><span class="badge badge-red">No</span></td>
+            <td><span class="badge badge-amber">UK FCA + EU</span></td>
+            <td><span class="badge badge-amber">Multi-token</span></td>
+            <td style="text-align:left; font-size:0.65rem; color:#aaa;">$15B processed in 2025. Cross-border B2B focus. Visa/Citi/Coinbase acquisition interest. UK/EU strength.</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><span class="seq-step">Coinbase (Platform)</span></td>
+            <td><span class="badge badge-green">Full</span></td>
+            <td><span class="badge badge-green">Custom branded</span></td>
+            <td><span class="badge badge-green">NYDFS trust + state MTLs</span></td>
+            <td><span class="badge badge-green">Coinbase Card</span></td>
+            <td><span class="badge badge-green">Public company + full licensing</span></td>
+            <td><span class="badge badge-amber">Base + ETH focus</span></td>
+            <td style="text-align:left; font-size:0.65rem; color:#aaa;">110M+ users. USDC partnership with Circle. Base L2 ecosystem. Dec 2025: custom stablecoin system upgrade.</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><span class="seq-step">MoonPay</span></td>
+            <td><span class="badge badge-green">On/off-ramps</span></td>
+            <td><span class="badge badge-red">No</span></td>
+            <td><span class="badge badge-amber">Third-party</span></td>
+            <td><span class="badge badge-red">No</span></td>
+            <td><span class="badge badge-amber">State MTLs + international</span></td>
+            <td><span class="badge badge-green">100+ cryptos</span></td>
+            <td style="text-align:left; font-size:0.65rem; color:#aaa;">Consumer on-ramp leader. Acquired Iron ($100M) + Helio ($175M). Widget-based embed. 20M+ users.</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><span class="seq-step">Agora</span></td>
+            <td><span class="badge badge-amber">Limited</span></td>
+            <td><span class="badge badge-green">AUSD</span></td>
+            <td><span class="badge badge-amber">Third-party</span></td>
+            <td><span class="badge badge-red">No</span></td>
+            <td><span class="badge badge-amber">Emerging</span></td>
+            <td><span class="badge badge-amber">Multi-chain</span></td>
+            <td style="text-align:left; font-size:0.65rem; color:#aaa;">Institutional-grade AUSD. VanEck founding family. Newer entrant focused on reserve quality + DeFi integration.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose">
+      <h2>Bridge's Competitive Moat</h2>
+
+      <div class="role-card blue">
+        <h3>1. Distribution via Stripe</h3>
+        <p>No other stablecoin infrastructure provider has access to Stripe's merchant base &mdash; half the Fortune 100, millions of businesses, $1.4T in annual payment volume. Within one week of enabling stablecoin payments, Stripe processed transactions from 70+ countries. Today, stablecoin payments flow from 120+ countries. This distribution advantage is essentially unreplicable by standalone competitors.</p>
+      </div>
+
+      <div class="role-card blue">
+        <h3>2. End-to-End Platform</h3>
+        <p>Bridge is the only provider offering <strong>all five layers</strong> in a single integration: orchestration, issuance, wallets, cards, and cross-border payments. Circle doesn't offer cards. Paxos doesn't offer orchestration. Brale doesn't offer cards. Bastion is still in private beta for several products. Coinbase comes closest but is exchange-first, not infrastructure-first.</p>
+      </div>
+
+      <div class="role-card blue">
+        <h3>3. Shared Liquidity Network (Open Issuance)</h3>
+        <p>The interoperability between all Open Issuance stablecoins (CASH, USDH, mUSD, etc.) creates a network effect. Each new coin adds liquidity to the entire network. No competitor has this &mdash; Brale offers interoperability across chains, but not across a network of custom-issued coins. Paxos issues for enterprise clients but without shared liquidity.</p>
+      </div>
+
+      <div class="role-card amber">
+        <h3>4. Regulatory Gap (Closing)</h3>
+        <p>Bridge's main competitive <em>weakness</em> vs. Bastion and Paxos has been regulatory depth. Bastion holds a NYDFS trust charter (existing qualified custodian). Paxos holds NYDFS + OCC + Singapore MAS. Bridge operated under state MTLs only &mdash; until the Feb 2026 OCC conditional approval. If finalized, the national trust bank charter would put Bridge on equal or superior regulatory footing.</p>
+      </div>
+
+      <h2>Who Competes Where</h2>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>For Global Payments &amp; Cross-Border</h3>
+        <p><strong>Bridge</strong> vs. <strong>BVNK</strong> vs. <strong>Circle</strong></p>
+        <p style="margin-top:0.4rem;">Bridge wins on Stripe integration + card issuing. BVNK is strong in UK/EU B2B ($15B processed). Circle wins on token ubiquity (USDC accepted everywhere) but lacks orchestration APIs.</p>
+      </div>
+      <div class="info-card">
+        <h3>For Stablecoin Issuance</h3>
+        <p><strong>Bridge (Open Issuance)</strong> vs. <strong>Paxos</strong> vs. <strong>Bastion</strong> vs. <strong>Brale</strong></p>
+        <p style="margin-top:0.4rem;">Bridge: fastest to market (days), shared liquidity, Stripe distribution. Paxos: strongest regulation, proven at PayPal scale. Bastion: best for banks needing NYDFS charter. Brale: broadest chain support (20+), best for L1/L2 ecosystems.</p>
+      </div>
+      <div class="info-card">
+        <h3>For Custody</h3>
+        <p><strong>Bridge</strong> vs. <strong>Bastion</strong> vs. <strong>Zero Hash</strong> vs. <strong>BitGo</strong> vs. <strong>Fidelity Digital</strong></p>
+        <p style="margin-top:0.4rem;">Bridge is weakest here until OCC finalizes. Bastion (NYDFS trust) and Zero Hash (regulated custodian) are stronger today for clients requiring qualified custodian status. BitGo and Fidelity are pure-play institutional custodians with OCC charters.</p>
+      </div>
+      <div class="info-card">
+        <h3>For Developer Experience</h3>
+        <p><strong>Bridge</strong> vs. <strong>Brale</strong> vs. <strong>MoonPay</strong> vs. <strong>Zero Hash</strong></p>
+        <p style="margin-top:0.4rem;">Bridge and Brale lead on developer-first APIs. MoonPay leads on consumer-facing widget embeds (drop-in checkout). Zero Hash is B2B API-focused but less self-serve. Bridge has the advantage of Stripe's developer ecosystem and documentation quality.</p>
+      </div>
+      <div class="info-card">
+        <h3>Recent M&amp;A Activity (Stablecoin Infrastructure)</h3>
+        <p style="font-size:0.75rem; color:#aaa;">
+          <strong>Stripe | Bridge</strong> &mdash; $1.1B (Oct 2024)<br>
+          <strong>Stripe | Privy</strong> &mdash; undisclosed (Jun 2025)<br>
+          <strong>MoonPay | Helio</strong> &mdash; $175M (2025)<br>
+          <strong>MoonPay | Iron</strong> &mdash; $100M (2025)<br>
+          <strong>Polygon | Coinme + Sequence</strong> &mdash; ~$250M (Jan 2026)<br>
+          <strong>Ripple | Rail</strong> &mdash; $200M<br>
+          <strong>Nuvei | Simplex</strong> &mdash; $250M
+        </p>
+        <p style="margin-top:0.4rem; font-size:0.75rem; color:#aaa;">The sector is consolidating rapidly. Full-stack platforms are acquiring specialist providers to close gaps. Bridge/Stripe has the largest war chest and broadest distribution.</p>
+      </div>
+      <div class="info-card">
+        <h3>OCC Trust Charter Comparison</h3>
+        <p style="font-size:0.75rem; color:#aaa;">
+          <strong>Dec 2025 approvals:</strong> Circle (de novo), Ripple (de novo), BitGo (state conversion), Fidelity Digital (state conversion), Paxos (state conversion)<br>
+          <strong>Feb 2026:</strong> Bridge (de novo, conditional)<br>
+          <strong>Applied:</strong> Coinbase, World Liberty Financial, others
+        </p>
+        <p style="margin-top:0.4rem; font-size:0.75rem; color:#aaa;">Bridge is the only OCC applicant with direct integration into a major global payments platform (Stripe), giving it potentially the largest distribution surface area of any chartered stablecoin entity.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+     TAB 7: ROLES & ACCESS CONTROL
+     ============================================================ -->
+  <div id="roles" class="section">
+    <h2>Roles, Access Control &amp; Responsibilities</h2>
+    <p class="desc">How Bridge separates concerns between the platform, the developer (you), customers (end users), and reserve/compliance partners.</p>
+
+    <div class="prose">
+      <div class="highlight-box">
+        <p><strong>Key principle:</strong> Bridge operates a <strong>custodial, platform-managed model</strong> &mdash; not an on-chain smart-contract role system like decentralized protocols. Access control is enforced at the API layer with API keys, customer endorsements, and dashboard-managed admin permissions. The trust model is: developers trust Bridge (and Stripe) to custody funds, enforce compliance, and manage blockchain operations.</p>
+      </div>
+
+      <h2>Platform Roles</h2>
+
+      <div class="role-card blue">
+        <h3>1. Bridge / Stripe (Platform Operator)</h3>
+        <p>The infrastructure provider. Operates the entire platform including blockchain nodes, custody systems, compliance engines, and fiat banking relationships.</p>
+        <p class="can-do" style="margin-top:0.4rem;">&bull; Manages: blockchain interactions, wallet key custody (HSM/MPC), gas fees, nonce management, transaction signing</p>
+        <p class="can-do">&bull; Enforces: KYC/KYB, AML screening, sanctions checks, Travel Rule, transaction monitoring</p>
+        <p class="can-do">&bull; Operates: reserve management for issued stablecoins (BlackRock, Fidelity, Superstate, Lead Bank)</p>
+        <p class="can-do">&bull; Provides: regulatory licensing (NMLS, state MTLs, EU registration), Visa card network relationships</p>
+        <p class="cant-do" style="margin-top:0.4rem;">&bull; Does NOT: make business decisions for developers, control how developers price or distribute their products, share customer data across developer accounts</p>
+      </div>
+
+      <div class="role-card amber">
+        <h3>2. Developer (Your Organization)</h3>
+        <p>You &mdash; the business building on Bridge. You control your integration, your customers, and your product experience.</p>
+        <p class="can-do" style="margin-top:0.4rem;">&bull; Controls: API keys (full account access), customer creation &amp; onboarding, transfer initiation, wallet provisioning, card program configuration</p>
+        <p class="can-do">&bull; Configures: webhook endpoints, return policies, stablecoin parameters (if issuing), card fees &amp; branding</p>
+        <p class="can-do">&bull; Manages: team admin permissions (via Account page in dashboard), sandbox vs. production environments</p>
+        <p class="cant-do" style="margin-top:0.4rem;">&bull; Cannot: access other developers' data, bypass KYC requirements for customers, directly manage private keys or blockchain transactions, modify reserve allocations after issuance setup</p>
+        <p style="margin-top:0.4rem; font-size:0.78rem; color:#aaa;"><strong>Important:</strong> API keys grant <em>full access</em> to your account. They must be stored securely and never shared publicly. Sandbox keys are per-developer, not per-org.</p>
+      </div>
+
+      <div class="role-card green">
+        <h3>3. Customer (End User)</h3>
+        <p>The individuals or businesses your product serves. They interact with Bridge only through your application &mdash; Bridge is invisible to them.</p>
+        <p class="can-do" style="margin-top:0.4rem;">&bull; Has: a verified identity (KYC/KYB), one or more endorsements unlocking capabilities, optional wallets, optional cards</p>
+        <p class="can-do">&bull; Can: deposit/withdraw via assigned virtual accounts, hold stablecoin balances in custodial wallets, spend via issued cards, receive transfers</p>
+        <p class="cant-do" style="margin-top:0.4rem;">&bull; Cannot: access the Bridge API directly, create their own API keys, manage other customers, bypass endorsement requirements</p>
+      </div>
+
+      <div class="role-card purple">
+        <h3>4. Stablecoin Issuer (Open Issuance User)</h3>
+        <p>A developer who has launched their own stablecoin via Open Issuance. Has additional controls beyond standard developer access.</p>
+        <p class="can-do" style="margin-top:0.4rem;">&bull; Configures: blockchain support, smart contract features, reserve allocation (cash vs. Treasuries), reward distribution, open vs. closed loop</p>
+        <p class="can-do">&bull; Earns: reserve rewards (3&ndash;4% from Treasuries), interchange (if cards enabled), transaction fees (configurable)</p>
+        <p class="can-do">&bull; Controls: stablecoin branding, interoperability settings (opt-in to shared liquidity), distribution channels</p>
+        <p class="cant-do" style="margin-top:0.4rem;">&bull; Cannot: directly access reserves (managed by BlackRock/Fidelity/Superstate/Lead Bank), modify other issuers' coins, bypass GENIUS Act compliance requirements</p>
+      </div>
+
+      <div class="role-card indigo">
+        <h3>5. Reserve Partners (BlackRock, Fidelity, Superstate, Lead Bank)</h3>
+        <p>External financial institutions that hold and manage the reserves backing issued stablecoins. Completely independent from Bridge's operational systems.</p>
+        <p class="can-do" style="margin-top:0.4rem;">&bull; Manages: investment of reserves in US Treasuries and cash equivalents, liquidity provisioning, attestation reporting</p>
+        <p class="cant-do" style="margin-top:0.4rem;">&bull; Cannot: access Bridge platform systems, view customer data, initiate transfers, modify stablecoin parameters</p>
+        <p style="margin-top:0.4rem; font-size:0.78rem; color:#aaa;"><strong>Separation of concerns:</strong> Reserve management is fully segregated from platform operations. Even if Bridge's API layer were compromised, reserves are held at independent, regulated financial institutions.</p>
+      </div>
+
+      <h2>How Roles Interact During a Transfer</h2>
+      <div class="highlight-box">
+        <p><strong>Setup (one-time):</strong> Developer registers, creates API key, configures webhooks. Customer is created and passes KYC/KYB (endorsements approved). Virtual account or wallet provisioned.</p>
+        <p style="margin-top:0.4rem;"><strong>During a transfer:</strong> Developer's app calls <code>POST /v0/transfers</code> with API key &rarr; Bridge validates customer endorsements &rarr; compliance engine screens transaction (AML, sanctions) &rarr; FX engine locks rate &rarr; source funds received (fiat rail or on-chain) &rarr; destination funds delivered &rarr; webhook fired to developer's app. The customer sees only what the developer's UI shows them. Bridge is invisible.</p>
+      </div>
+
+      <h2>Admin Permission Management</h2>
+      <div class="role-card blue">
+        <p><span class="badge badge-blue">Dashboard</span> Team admin permissions are managed directly from the <strong>Account page</strong> in the Bridge Dashboard. No support ticket needed. Admins can invite team members, set permission levels, and manage access. Production API keys may be shared across the org; sandbox keys are per-developer.</p>
+      </div>
+
+      <h2>Key Security Principles</h2>
+      <p><strong>Custodial trust model:</strong> Unlike decentralized protocols where smart contract roles enforce access on-chain, Bridge uses a traditional custodial model. You trust Bridge (backed by Stripe) to operate the infrastructure honestly. This is appropriate for regulated financial services where counterparty accountability matters.</p>
+      <p><strong>Defense in depth:</strong> Multiple layers &mdash; API authentication, endorsement-based authorization, compliance screening, custody isolation, reserve segregation &mdash; ensure no single failure compromises the system.</p>
+      <p><strong>Regulatory accountability:</strong> Bridge holds real licenses (NMLS, state MTLs, EU registration) with regulatory obligations. Stripe's public company-grade compliance standards apply. This is not pseudonymous DeFi &mdash; there is a legal entity accountable for operations.</p>
+      <p><strong>Data isolation:</strong> Developer accounts are fully isolated. API keys, customer data, transfer records, and wallet balances are not shared across organizations. Sandbox and production environments are completely separate.</p>
+    </div>
+  </div>
+
+<div class="footer">Valinor Partnership Review &middot; Confidential</div>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>

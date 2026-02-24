@@ -3,875 +3,470 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ENTITY_NAME — Valinor Partnership Review</title>
+<title>ENTITY_NAME &mdash; Valinor Partnership Review</title>
 <style>
   /* ============================================================
      VALINOR PARTNERSHIP REVIEW — DESIGN SYSTEM
-     Dark theme research document with tabbed navigation
+     Dark theme research document with tabbed navigation.
+
+     ACCENT COLOR: Replace all instances of the accent hex values
+     below to match the entity type. See color guide in CLAUDE.md.
+     Current: Blue/Cyan (#0ea5e9 accent, #7dd3fc light, #0c1929 bg)
+
+     Blue/Cyan:  accent=#0ea5e9  light=#7dd3fc  bg=#0c1929
+     Purple:     accent=#7c3aed  light=#c4b5fd  bg=#1a1040
+     Green:      accent=#10b981  light=#6ee7b7  bg=#0a2818
+     Amber:      accent=#f59e0b  light=#fcd34d  bg=#2a1800
+     Red/Rose:   accent=#f43f5e  light=#fda4af  bg=#2a0a14
+     Teal:       accent=#14b8a6  light=#5eead4  bg=#0a2828
      ============================================================ */
 
   /* --- Reset & Base --- */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0f; color: #e0e0e8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
 
-  body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: #0a0a0f;
-    color: #e0e0e0;
-    line-height: 1.7;
-    padding: 0;
-    min-height: 100vh;
-  }
+  /* --- Title --- */
+  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; background: linear-gradient(135deg, #0ea5e9, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .meta { margin-top: 4px; font-size: 0.75rem; color: #666; }
 
-  /* --- Accent Color (customize per entity) --- */
-  :root {
-    --accent: #00d4ff;        /* Change per entity: blue/cyan, purple #8b5cf6, green #10b981, amber #f59e0b, red #f43f5e, teal #14b8a6 */
-    --accent-dim: rgba(0, 212, 255, 0.15);
-    --accent-border: rgba(0, 212, 255, 0.3);
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --surface-2: #1a1a28;
-    --border: #1e1e2e;
-    --border-light: #2a2a3a;
-    --text: #e0e0e0;
-    --text-secondary: #888;
-    --text-dim: #666;
-    --green: #10b981;
-    --amber: #f59e0b;
-    --red: #f43f5e;
-    --blue: #3b82f6;
-    --purple: #8b5cf6;
-    --teal: #14b8a6;
-  }
+  /* --- Tabs (pill-style) --- */
+  .tabs { display: flex; gap: 0.4rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+  .tab { padding: 0.5rem 1rem; background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 8px; color: #aaa; cursor: pointer; font-size: 0.82rem; transition: all 0.2s; }
+  .tab:hover { border-color: #0ea5e9; color: #ddd; }
+  .tab.active { background: #0ea5e922; border-color: #0ea5e9; color: #7dd3fc; }
 
-  /* --- Title Bar --- */
-  .title-bar {
-    background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
-    border-bottom: 2px solid var(--accent-border);
-    padding: 40px 48px 32px;
-  }
-  .title-bar h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    background: linear-gradient(90deg, var(--accent), #fff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 8px;
-  }
-  .title-bar .subtitle {
-    color: var(--text-secondary);
-    font-size: 1rem;
-  }
-  .title-bar .meta {
-    margin-top: 12px;
-    font-size: 0.85rem;
-    color: var(--text-dim);
-  }
-
-  /* --- Container --- */
-  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px 60px; }
-
-  /* --- Tabs --- */
-  .tabs {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
-    margin: 24px 0 0;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .tab-btn {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    padding: 12px 20px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: color 0.2s, border-color 0.2s;
-  }
-  .tab-btn:hover { color: var(--text); }
-  .tab-btn.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
-
-  /* --- Sections (tab panels) --- */
-  .section { display: none; padding: 32px 0; }
+  /* --- Sections (card-wrapped tab panels) --- */
+  .section { display: none; background: #111118; border: 1px solid #2a2a4a; border-radius: 12px; padding: 1.5rem; }
   .section.active { display: block; }
-
-  /* --- Typography --- */
-  h2 {
-    font-size: 1.5rem;
-    color: var(--accent);
-    margin-bottom: 4px;
-    font-weight: 700;
-  }
-  h3 {
-    font-size: 1.15rem;
-    color: var(--text);
-    margin: 28px 0 12px;
-    font-weight: 600;
-  }
-  h4 {
-    font-size: 1rem;
-    color: var(--text-secondary);
-    margin: 20px 0 8px;
-    font-weight: 600;
-  }
-  .desc {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin-bottom: 24px;
-  }
-  p { margin-bottom: 16px; }
-
-  /* --- Prose --- */
-  .prose {
-    max-width: 800px;
-    line-height: 1.8;
-    color: var(--text);
-    margin-bottom: 24px;
-  }
-  .prose strong { color: #fff; }
-  .prose a { color: var(--accent); text-decoration: none; }
-  .prose a:hover { text-decoration: underline; }
-
-  /* --- Highlight Box --- */
-  .highlight-box {
-    background: var(--accent-dim);
-    border: 1px solid var(--accent-border);
-    border-left: 4px solid var(--accent);
-    border-radius: 8px;
-    padding: 20px 24px;
-    margin-bottom: 28px;
-    font-size: 1.05rem;
-    line-height: 1.6;
-  }
-
-  /* --- Callout Boxes --- */
-  .callout-amber {
-    background: rgba(245, 158, 11, 0.1);
-    border: 1px solid rgba(245, 158, 11, 0.25);
-    border-left: 4px solid var(--amber);
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin-bottom: 20px;
-    color: #fbbf24;
-    font-size: 0.95rem;
-  }
-  .callout-red {
-    background: rgba(244, 63, 94, 0.1);
-    border: 1px solid rgba(244, 63, 94, 0.25);
-    border-left: 4px solid var(--red);
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin-bottom: 20px;
-    color: #fb7185;
-    font-size: 0.95rem;
-  }
-  .callout-green {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.25);
-    border-left: 4px solid var(--green);
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin-bottom: 20px;
-    color: #6ee7b7;
-    font-size: 0.95rem;
-  }
-
-  /* --- Info Grid & Cards --- */
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-  .info-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-  }
-  .info-card .label {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 6px;
-  }
-  .info-card .value {
-    font-size: 1.1rem;
-    color: #fff;
-    font-weight: 600;
-  }
-  .info-card .detail {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-top: 6px;
-  }
-
-  /* --- Role Cards --- */
-  .role-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 24px;
-    margin-bottom: 16px;
-    border-left: 4px solid var(--accent);
-  }
-  .role-card.role-green  { border-left-color: var(--green); }
-  .role-card.role-amber  { border-left-color: var(--amber); }
-  .role-card.role-red    { border-left-color: var(--red); }
-  .role-card.role-blue   { border-left-color: var(--blue); }
-  .role-card.role-purple { border-left-color: var(--purple); }
-
-  .role-card h4 {
-    margin: 0 0 12px;
-    color: #fff;
-    font-size: 1.05rem;
-  }
-  .role-card .perm {
-    font-size: 0.9rem;
-    line-height: 1.8;
-    color: var(--text-secondary);
-  }
+  .section h2 { font-size: 1.2rem; margin-bottom: 0.4rem; color: #7dd3fc; }
+  .section .desc { color: #888; font-size: 0.82rem; margin-bottom: 1rem; }
 
   /* --- Flow Diagrams --- */
-  .flow {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px;
-    margin: 20px 0 28px;
-    padding: 24px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow-x: auto;
-  }
-  .flow.flow-vertical {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .flow-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 16px;
-    border: 1px dashed var(--border-light);
-    border-radius: 8px;
-    min-width: 160px;
-  }
-  .flow-group-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-dim);
-    margin-bottom: 4px;
-  }
+  .flow { display: flex; flex-direction: column; align-items: center; gap: 0; padding: 1rem; background: #0d0d14; border-radius: 8px; overflow-x: auto; }
+  .flow-row { display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .node { padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.75rem; text-align: center; min-width: 140px; max-width: 240px; line-height: 1.4; }
+  .node b { display: block; font-size: 0.8rem; margin-bottom: 0.2rem; }
+  .node-blue { background: #0c1929; border: 1.5px solid #0ea5e9; color: #e0e0e8; }
+  .node-cyan { background: #001828; border: 1.5px solid #06b6d4; color: #e0e0e8; }
+  .node-amber { background: #2a1800; border: 1.5px solid #f59e0b; color: #e0e0e8; }
+  .node-green { background: #0a2818; border: 1.5px solid #10b981; color: #e0e0e8; }
+  .node-red { background: #2a0a0a; border: 1.5px solid #ef4444; color: #e0e0e8; }
+  .node-indigo { background: #1e1b4b; border: 1.5px solid #818cf8; color: #e0e0e8; }
+  .node-purple { background: #1a1040; border: 1.5px solid #a855f7; color: #e0e0e8; }
+  .node-gray { background: #1a1a2e; border: 1.5px solid #555; color: #ccc; }
+  .arrow { color: #0ea5e9; font-size: 0.7rem; text-align: center; padding: 0.3rem 0; }
+  .arrow-label { color: #999; font-size: 0.65rem; font-style: italic; }
+  .group-box { border: 1px dashed #444; border-radius: 10px; padding: 0.8rem; margin: 0.5rem 0; }
+  .group-box .group-label { font-size: 0.7rem; color: #888; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .conn { display: flex; flex-direction: column; align-items: center; }
+  .conn-line { width: 2px; height: 18px; background: #0ea5e966; }
+  .conn-arrow-down { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #0ea5e9; }
 
-  .node {
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 0.88rem;
-    font-weight: 500;
-    text-align: center;
-    min-width: 120px;
-  }
-  .node-blue   { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #93c5fd; }
-  .node-purple { background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.35); color: #c4b5fd; }
-  .node-green  { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #6ee7b7; }
-  .node-amber  { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); color: #fcd34d; }
-  .node-red    { background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.35); color: #fda4af; }
-  .node-teal   { background: rgba(20, 184, 166, 0.15); border: 1px solid rgba(20, 184, 166, 0.35); color: #5eead4; }
-  .node-accent { background: var(--accent-dim); border: 1px solid var(--accent-border); color: var(--accent); }
-
-  .conn {
-    color: var(--text-dim);
-    font-size: 1.2rem;
-    font-weight: 300;
-    padding: 0 4px;
-    user-select: none;
-  }
-  .conn-label {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    text-align: center;
-    display: block;
-    margin-top: -8px;
-  }
-
-  /* --- Sequence Table --- */
-  .seq-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 16px 0 28px;
-    font-size: 0.9rem;
-  }
-  .seq-table th {
-    background: var(--surface-2);
-    color: var(--text-secondary);
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.78rem;
-    letter-spacing: 0.04em;
-    padding: 12px 16px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-  }
-  .seq-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
-  .seq-table tr:hover td {
-    background: rgba(255,255,255,0.02);
-  }
-  .seq-table .step-num {
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 0.95rem;
-  }
-
-  /* --- Atomic Transaction Box --- */
-  .atomic-box {
-    background: var(--surface);
-    border: 2px dashed var(--accent-border);
-    border-radius: 10px;
-    padding: 20px;
-    margin: 16px 0 24px;
-  }
-  .atomic-box .atomic-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--accent);
-    margin-bottom: 12px;
-    font-weight: 600;
-  }
-
-  /* --- Security Layers --- */
-  .sec-layers {
-    counter-reset: sec-counter;
-    margin: 16px 0 28px;
-  }
-  .sec-layer {
-    counter-increment: sec-counter;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px 20px 16px 60px;
-    margin-bottom: 12px;
-    position: relative;
-  }
-  .sec-layer::before {
-    content: counter(sec-counter);
-    position: absolute;
-    left: 20px;
-    top: 16px;
-    width: 28px;
-    height: 28px;
-    background: var(--accent-dim);
-    border: 1px solid var(--accent-border);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--accent);
-  }
-  .sec-layer h4 {
-    margin: 0 0 4px;
-    color: #fff;
-    font-size: 0.95rem;
-  }
-  .sec-layer p {
-    margin: 0;
-    font-size: 0.88rem;
-    color: var(--text-secondary);
-  }
+  /* --- Info Cards --- */
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-top: 1.2rem; }
+  .info-card { background: #12121c; border: 1px solid #2a2a4a; border-radius: 10px; padding: 1rem; }
+  .info-card h3 { font-size: 0.9rem; color: #0ea5e9; margin-bottom: 0.4rem; }
+  .info-card p, .info-card li { font-size: 0.8rem; color: #aaa; line-height: 1.5; }
+  .info-card ul { padding-left: 1.2rem; }
+  .info-card li { margin-bottom: 0.25rem; }
+  .code-block { background: #0d0d14; border: 1px solid #2a2a4a; border-radius: 6px; padding: 0.7rem; font-family: 'Courier New', monospace; font-size: 0.72rem; color: #7dd3fc; overflow-x: auto; margin-top: 0.4rem; white-space: pre; }
 
   /* --- Badges --- */
-  .badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-  }
-  .badge-green  { background: rgba(16, 185, 129, 0.15); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); }
-  .badge-amber  { background: rgba(245, 158, 11, 0.15); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.3); }
-  .badge-red    { background: rgba(244, 63, 94, 0.15); color: var(--red); border: 1px solid rgba(244, 63, 94, 0.3); }
-  .badge-blue   { background: rgba(59, 130, 246, 0.15); color: var(--blue); border: 1px solid rgba(59, 130, 246, 0.3); }
-  .badge-purple { background: rgba(139, 92, 246, 0.15); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.3); }
+  .badge { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.68rem; font-weight: 600; }
+  .badge-red { background: #ef444433; color: #fca5a5; border: 1px solid #ef444455; }
+  .badge-amber { background: #f59e0b33; color: #fcd34d; border: 1px solid #f59e0b55; }
+  .badge-green { background: #10b98133; color: #6ee7b7; border: 1px solid #10b98155; }
+  .badge-blue { background: #0ea5e933; color: #7dd3fc; border: 1px solid #0ea5e955; }
 
-  /* --- Code Block --- */
-  .code-block {
-    background: #0d0d14;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 20px;
-    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-    font-size: 0.85rem;
-    color: #a8b2d1;
-    overflow-x: auto;
-    margin: 12px 0 20px;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
+  /* --- Permissions Layout --- */
+  .perm-container { display: flex; gap: 1.5rem; flex-wrap: wrap; padding: 1rem; background: #0d0d14; border-radius: 8px; }
+  .perm-column { flex: 1; min-width: 280px; }
+  .perm-column h4 { font-size: 0.78rem; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.6rem; padding-bottom: 0.3rem; border-bottom: 1px solid #333; }
+  .perm-node { padding: 0.6rem 0.8rem; border-radius: 8px; font-size: 0.72rem; margin-bottom: 0.5rem; line-height: 1.4; }
+  .perm-node b { display: block; font-size: 0.78rem; margin-bottom: 0.15rem; }
+  .perm-node .restrict { color: #ef4444; font-size: 0.68rem; }
+  .perm-arrow { text-align: center; color: #0ea5e9; font-size: 0.8rem; padding: 0.15rem 0; }
+  .perm-divider { width: 2px; background: #333; min-height: 100px; align-self: stretch; }
 
-  /* --- Divider --- */
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 32px 0;
-  }
+  /* --- Security Layers --- */
+  .sec-layers { display: flex; flex-direction: column; gap: 0; padding: 1rem; background: #0d0d14; border-radius: 8px; }
+  .sec-layer { display: flex; align-items: stretch; border-bottom: 1px solid #1a1a2e; }
+  .sec-layer:last-child { border-bottom: none; }
+  .sec-num { width: 50px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: #0ea5e9; flex-shrink: 0; }
+  .sec-content { flex: 1; padding: 0.6rem 0.8rem; }
+  .sec-content b { font-size: 0.78rem; color: #7dd3fc; }
+  .sec-content span { font-size: 0.72rem; color: #aaa; }
 
-  /* --- List Styles --- */
-  ul, ol {
-    margin: 0 0 16px 20px;
-    color: var(--text-secondary);
-  }
-  li { margin-bottom: 6px; }
-  li strong { color: var(--text); }
+  /* --- Callouts --- */
+  .callout { margin-top: 0.8rem; padding: 0.5rem; border-radius: 6px; }
+  .callout-blue { border: 1px dashed #0ea5e966; }
+  .callout-red { border: 1px dashed #ef444466; }
+  .callout-amber { border: 1px dashed #f59e0b66; }
+  .callout-title { font-size: 0.72rem; font-weight: 600; margin-bottom: 0.15rem; }
+  .callout-text { font-size: 0.7rem; color: #aaa; }
+
+  /* --- Fee Table --- */
+  .fee-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.8rem; }
+  .fee-table th { background: #1a1a2e; color: #0ea5e9; padding: 0.4rem; text-align: left; border-bottom: 1px solid #2a2a4a; }
+  .fee-table td { padding: 0.4rem; border-bottom: 1px solid #1a1a2e; color: #ccc; }
+
+  /* --- Sequence Table --- */
+  .seq { background: #0d0d14; border-radius: 8px; padding: 1rem; overflow-x: auto; }
+  .seq-table { width: 100%; min-width: 700px; border-collapse: collapse; }
+  .seq-table th { font-size: 0.72rem; color: #7dd3fc; padding: 0.5rem 0.3rem; border-bottom: 2px solid #333; text-align: center; }
+  .seq-table td { font-size: 0.68rem; padding: 0.25rem 0.3rem; vertical-align: top; text-align: center; color: #bbb; border-bottom: 1px solid #1a1a2e; }
+  .seq-step { background: #0c1929; padding: 0.3rem 0.6rem; border-radius: 4px; display: inline-block; font-size: 0.68rem; color: #7dd3fc; margin: 0.1rem 0; }
+  .seq-atomic { background: #0a1520; border: 1px solid #0ea5e944; border-radius: 6px; padding: 0.3rem; }
+  .seq-msg { color: #aaa; font-size: 0.65rem; }
+
+  /* --- Prose Content --- */
+  .prose { font-size: 0.84rem; color: #ccc; line-height: 1.7; max-width: 900px; }
+  .prose h2 { font-size: 1.15rem; color: #7dd3fc; margin: 1.8rem 0 0.6rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #2a2a4a; }
+  .prose h2:first-child { margin-top: 0; }
+  .prose h3 { font-size: 0.95rem; color: #38bdf8; margin: 1.4rem 0 0.4rem 0; }
+  .prose p { margin-bottom: 0.8rem; }
+  .prose strong { color: #e0e0e8; }
+  .prose code { background: #0c1929; padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.78rem; color: #7dd3fc; }
+  .prose .highlight-box { background: #12121c; border: 1px solid #2a2a4a; border-radius: 8px; padding: 1rem; margin: 0.8rem 0; }
+  .prose .highlight-box p:last-child { margin-bottom: 0; }
+  .prose hr { border: none; border-top: 1px solid #2a2a4a; margin: 1.5rem 0; }
+  .prose .role-card { background: #12121c; border-radius: 8px; padding: 1rem; margin: 0.8rem 0; }
+  .prose .role-card.blue { border-left: 3px solid #0ea5e9; }
+  .prose .role-card.amber { border-left: 3px solid #f59e0b; }
+  .prose .role-card.green { border-left: 3px solid #10b981; }
+  .prose .role-card.red { border-left: 3px solid #ef4444; }
+  .prose .role-card.purple { border-left: 3px solid #a855f7; }
+  .prose .role-card.indigo { border-left: 3px solid #818cf8; }
+  .prose .can-do { color: #6ee7b7; font-size: 0.78rem; }
+  .prose .cant-do { color: #fca5a5; font-size: 0.78rem; }
+  .prose .fee-list { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 1rem; font-size: 0.82rem; margin: 0.5rem 0; }
+  .prose .fee-list .vol { color: #aaa; } .prose .fee-list .rate { color: #7dd3fc; font-weight: 600; }
 
   /* --- Footer --- */
-  .footer {
-    text-align: center;
-    padding: 40px 0 20px;
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    border-top: 1px solid var(--border);
-    margin-top: 40px;
-  }
-
-  /* --- Responsive --- */
-  @media (max-width: 768px) {
-    .title-bar { padding: 24px; }
-    .title-bar h1 { font-size: 1.5rem; }
-    .container { padding: 0 16px 40px; }
-    .info-grid { grid-template-columns: 1fr; }
-    .flow { flex-direction: column; padding: 16px; }
-    .tab-btn { padding: 10px 14px; font-size: 0.82rem; }
-  }
+  .footer { text-align: center; padding: 1.5rem 0 1rem; color: #555; font-size: 0.72rem; border-top: 1px solid #1a1a2e; margin-top: 2rem; }
 </style>
 </head>
 <body>
-
-<!-- ============================================================
-     TITLE BAR — Customize entity name, type, and date
-     ============================================================ -->
-<div class="title-bar">
-  <h1>ENTITY_NAME</h1>
-  <div class="subtitle">Partnership Review — ENTITY_TYPE_DESCRIPTION</div>
-  <div class="meta">Prepared by Valinor Credit Team · DATE_LONG · v1</div>
-</div>
-
 <div class="container">
 
-<!-- ============================================================
-     TAB NAVIGATION — Add/remove tabs as needed
-     ============================================================ -->
-<div class="tabs">
-  <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
-  <button class="tab-btn" onclick="showTab('architecture')">Tech Stack</button>
-  <button class="tab-btn" onclick="showTab('coreflow')">Core Flow</button>
-  <button class="tab-btn" onclick="showTab('money')">Money Movement</button>
-  <button class="tab-btn" onclick="showTab('roles')">Roles &amp; Access</button>
-  <button class="tab-btn" onclick="showTab('security')">Security</button>
-  <button class="tab-btn" onclick="showTab('comps')">Comps</button>
-  <button class="tab-btn" onclick="showTab('risks')">Risks</button>
-</div>
+  <!-- ============================================================
+       TITLE — Customize entity name, type, and date
+       ============================================================ -->
+  <h1>ENTITY_NAME</h1>
+  <p class="subtitle">Partnership Review &mdash; ENTITY_TYPE_DESCRIPTION</p>
+  <div class="meta">Prepared by Valinor Credit Team &middot; DATE_LONG &middot; v1</div>
 
-<!-- ============================================================
-     TAB 1: OVERVIEW
-     ============================================================ -->
-<div id="overview" class="section active">
-  <h2>Overview</h2>
-  <p class="desc">Non-technical explainer — what this entity does and why it matters to Valinor.</p>
-
-  <div class="highlight-box">
-    <strong>One-sentence summary:</strong> ENTITY_NAME is [what it is] that [what it does] for [who it serves].
+  <!-- ============================================================
+       TAB NAVIGATION — Add/remove tabs as needed
+       ============================================================ -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('overview')">Overview</button>
+    <button class="tab" onclick="showTab('architecture')">Tech Stack</button>
+    <button class="tab" onclick="showTab('coreflow')">Core Flow</button>
+    <button class="tab" onclick="showTab('money')">Money Movement</button>
+    <button class="tab" onclick="showTab('roles')">Roles &amp; Access</button>
+    <button class="tab" onclick="showTab('security')">Security</button>
+    <button class="tab" onclick="showTab('comps')">Comps</button>
+    <button class="tab" onclick="showTab('risks')">Risks</button>
   </div>
 
-  <h3>Why It Exists</h3>
-  <div class="prose">
-    <p><strong>Problem:</strong> [Describe the problem this entity solves]</p>
-    <p><strong>Solution:</strong> [Describe the solution]</p>
-  </div>
 
-  <h3>How It Works (High Level)</h3>
-  <div class="prose">
-    <p>[2-3 sentence non-technical explanation]</p>
-  </div>
+  <!-- ============================================================
+       TAB 1: OVERVIEW
+       Non-technical explainer accessible to anyone on the team.
+       ============================================================ -->
+  <div id="overview" class="section active">
+    <h2>Overview</h2>
+    <p class="desc">Non-technical explainer &mdash; what this entity does and why it matters to Valinor.</p>
 
-  <h3>Who Uses It</h3>
-  <div class="info-grid">
-    <div class="info-card">
-      <div class="label">Primary Users</div>
-      <div class="value">[User type]</div>
-      <div class="detail">[Brief description]</div>
-    </div>
-    <div class="info-card">
-      <div class="label">Use Case</div>
-      <div class="value">[Primary use case]</div>
-      <div class="detail">[Brief description]</div>
-    </div>
-    <div class="info-card">
-      <div class="label">Scale</div>
-      <div class="value">[TVL / Volume / Users]</div>
-      <div class="detail">[As of date]</div>
-    </div>
-  </div>
+    <div class="prose">
+      <div class="highlight-box">
+        <p><strong>One-sentence summary:</strong> ENTITY_NAME is [what it is] that [what it does] for [who it serves].</p>
+      </div>
 
-  <h3>Team &amp; Backing</h3>
-  <div class="prose">
-    <p>[Founders, key team members, notable investors, funding rounds]</p>
-  </div>
+      <h2>Why It Exists</h2>
+      <p><strong>Problem:</strong> [Describe the problem this entity solves]</p>
+      <p><strong>Solution:</strong> [Describe the solution]</p>
 
-  <h3>Regulatory Status</h3>
-  <div class="prose">
-    <p>[Licensing, jurisdiction, compliance status]</p>
-  </div>
+      <h2>How It Works (High Level)</h2>
+      <p>[2-3 sentence non-technical explanation]</p>
 
-  <h3>Valinor Relevance</h3>
-  <div class="highlight-box">
-    [How this entity could fit into Valinor's credit operations — origination, settlement, collateral management, distribution, etc.]
-  </div>
-</div>
+      <h2>Who Uses It</h2>
+      <p>[Primary users, counterparties, and scale]</p>
 
-<!-- ============================================================
-     TAB 2: TECH STACK / ARCHITECTURE
-     ============================================================ -->
-<div id="architecture" class="section">
-  <h2>Tech Stack &amp; Architecture</h2>
-  <p class="desc">Platform modules, smart contract architecture, infrastructure dependencies, and chain support.</p>
+      <h2>Team &amp; Backing</h2>
+      <p>[Founders, key team members, notable investors, funding rounds]</p>
 
-  <h3>Architecture Overview</h3>
-  <div class="flow">
-    <div class="flow-group">
-      <div class="flow-group-label">Layer 1</div>
-      <div class="node node-blue">[Component]</div>
-      <div class="node node-blue">[Component]</div>
-    </div>
-    <span class="conn">→</span>
-    <div class="flow-group">
-      <div class="flow-group-label">Layer 2</div>
-      <div class="node node-purple">[Component]</div>
-    </div>
-    <span class="conn">→</span>
-    <div class="flow-group">
-      <div class="flow-group-label">Layer 3</div>
-      <div class="node node-green">[Component]</div>
+      <h2>Regulatory Status</h2>
+      <p>[Licensing, jurisdiction, compliance status]</p>
+
+      <h2>Valinor Relevance</h2>
+      <div class="highlight-box">
+        <p>[How this entity could fit into Valinor's credit operations &mdash; origination, settlement, collateral management, distribution, etc.]</p>
+      </div>
     </div>
   </div>
 
-  <h3>Chain Support</h3>
-  <div class="info-grid">
-    <div class="info-card">
-      <div class="label">Supported Chains</div>
-      <div class="value">[Chain list]</div>
+
+  <!-- ============================================================
+       TAB 2: TECH STACK / ARCHITECTURE
+       Platform modules, smart contract architecture, chain support.
+       ============================================================ -->
+  <div id="architecture" class="section">
+    <h2>Tech Stack &amp; Architecture</h2>
+    <p class="desc">Platform modules, smart contract architecture, infrastructure dependencies, and chain support.</p>
+
+    <div class="flow">
+      <div class="node node-gray"><b>[Entry Point]</b>User / API caller</div>
+      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
+      <div class="group-box" style="border-color:#0ea5e955; max-width:600px; width:100%;">
+        <div class="group-label" style="color:#0ea5e9;">[Core Module Name]</div>
+        <div class="flow-row">
+          <div class="node node-blue"><b>[Component A]</b>[Description]</div>
+          <div class="arrow">&rarr;</div>
+          <div class="node node-blue"><b>[Component B]</b>[Description]</div>
+          <div class="arrow">&rarr;</div>
+          <div class="node node-blue"><b>[Component C]</b>[Description]</div>
+        </div>
+      </div>
+      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
+      <div class="flow-row" style="gap:2rem;">
+        <div class="node node-green"><b>[External Dep A]</b>[Description]</div>
+        <div class="node node-amber"><b>[External Dep B]</b>[Description]</div>
+      </div>
     </div>
-    <div class="info-card">
-      <div class="label">Smart Contracts</div>
-      <div class="value">[Audited / Unaudited]</div>
-      <div class="detail">[Auditor name if applicable]</div>
-    </div>
-  </div>
 
-  <h3>Key Contract Addresses</h3>
-  <div class="code-block">[Chain]: 0x0000000000000000000000000000000000000000</div>
-</div>
-
-<!-- ============================================================
-     TAB 3: CORE FLOW / HOW IT WORKS
-     ============================================================ -->
-<div id="coreflow" class="section">
-  <h2>Core Flow</h2>
-  <p class="desc">Step-by-step sequence of the primary operation.</p>
-
-  <table class="seq-table">
-    <thead>
-      <tr><th>Step</th><th>Action</th><th>Actor</th><th>Details</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="step-num">1</span></td>
-        <td>[Action description]</td>
-        <td>[Who performs it]</td>
-        <td>[Technical details]</td>
-      </tr>
-      <tr>
-        <td><span class="step-num">2</span></td>
-        <td>[Action description]</td>
-        <td>[Who performs it]</td>
-        <td>[Technical details]</td>
-      </tr>
-      <tr>
-        <td><span class="step-num">3</span></td>
-        <td>[Action description]</td>
-        <td>[Who performs it]</td>
-        <td>[Technical details]</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h3>Atomic Transaction</h3>
-  <div class="atomic-box">
-    <div class="atomic-label">⚡ Single On-Chain Transaction</div>
-    <p>[Describe what happens atomically in a single transaction]</p>
-  </div>
-</div>
-
-<!-- ============================================================
-     TAB 4: MONEY MOVEMENT
-     ============================================================ -->
-<div id="money" class="section">
-  <h2>Money Movement</h2>
-  <p class="desc">How funds flow end-to-end: on-ramps, off-ramps, settlement rails, stablecoin dependencies.</p>
-
-  <div class="flow">
-    <div class="node node-green">[Source of Funds]</div>
-    <span class="conn">→</span>
-    <div class="node node-blue">[On-Ramp / Bridge]</div>
-    <span class="conn">→</span>
-    <div class="node node-purple">[Protocol / Pool]</div>
-    <span class="conn">→</span>
-    <div class="node node-amber">[Settlement]</div>
-    <span class="conn">→</span>
-    <div class="node node-green">[Destination]</div>
-  </div>
-
-  <h3>Key Details</h3>
-  <div class="info-grid">
-    <div class="info-card">
-      <div class="label">Settlement Token</div>
-      <div class="value">[USDC / USDT / etc.]</div>
-    </div>
-    <div class="info-card">
-      <div class="label">Settlement Time</div>
-      <div class="value">[Time]</div>
-    </div>
-    <div class="info-card">
-      <div class="label">Custody Model</div>
-      <div class="value">[Self-custody / Custodian / Hybrid]</div>
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Supported Chains</h3>
+        <p>[Chain list with deployment status]</p>
+      </div>
+      <div class="info-card">
+        <h3>Smart Contracts</h3>
+        <p>[Audited / Unaudited] — [Auditor name if applicable]</p>
+      </div>
+      <div class="info-card">
+        <h3>Key Contract Addresses</h3>
+        <div class="code-block">[Chain]: 0x0000...0000</div>
+      </div>
     </div>
   </div>
 
-  <div class="callout-amber">
-    ⚠️ <strong>Note:</strong> [Flag any points where funds are custodied by a third party or where transparency is limited]
-  </div>
-</div>
 
-<!-- ============================================================
-     TAB 5: ROLES & ACCESS CONTROL
-     ============================================================ -->
-<div id="roles" class="section">
-  <h2>Roles &amp; Access Control</h2>
-  <p class="desc">Who controls what — admin keys, multisig structures, governance, upgrade authority.</p>
+  <!-- ============================================================
+       TAB 3: CORE FLOW / HOW IT WORKS
+       Step-by-step sequence of the primary operation.
+       ============================================================ -->
+  <div id="coreflow" class="section">
+    <h2>Core Flow</h2>
+    <p class="desc">Step-by-step sequence of the primary operation.</p>
 
-  <div class="role-card role-blue">
-    <h4>🔑 Admin / Owner</h4>
-    <div class="perm">
-      ✅ Can upgrade smart contracts<br>
-      ✅ Can pause protocol operations<br>
-      ✅ Can modify fee parameters<br>
-      ❌ Cannot access user funds directly<br>
-      ❌ Cannot bypass timelock
+    <div class="seq">
+      <table class="seq-table">
+        <thead><tr><th style="width:5%;">#</th><th style="width:12%;">From</th><th style="width:10%;"></th><th style="width:12%;">To</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>[Actor]</td><td>&rarr;</td><td>[Recipient]</td><td style="text-align:left;"><span class="seq-step">[function/action]</span><br><span class="seq-msg">[Description]</span></td></tr>
+          <tr><td>2</td><td>[Actor]</td><td>&rarr;</td><td>[Recipient]</td><td style="text-align:left;"><span class="seq-step">[function/action]</span><br><span class="seq-msg">[Description]</span></td></tr>
+          <tr><td>3</td><td>[Actor]</td><td>&rarr;</td><td>[Recipient]</td><td style="text-align:left;"><span class="seq-step">[function/action]</span><br><span class="seq-msg">[Description]</span></td></tr>
+          <tr><td colspan="5" style="padding:0.5rem;"><div class="seq-atomic">
+            <div style="text-align:center; color:#0ea5e9; font-size:0.72rem; font-weight:600; margin-bottom:0.3rem;">ATOMIC &mdash; All Steps Below Succeed or Entire Tx Reverts</div>
+            <table class="seq-table" style="margin:0;"><tbody>
+              <tr><td style="width:5%;">4</td><td style="width:12%;">[Actor]</td><td style="width:10%;">&rarr;</td><td style="width:12%;">[Recipient]</td><td style="text-align:left;"><span class="seq-step">[function]</span> <span class="seq-msg">[Description]</span></td></tr>
+              <tr><td>5</td><td>[Actor]</td><td>&rarr;</td><td>[Recipient]</td><td style="text-align:left;"><span class="seq-step">[function]</span> <span class="seq-msg">[Description]</span></td></tr>
+            </tbody></table>
+          </div></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <div class="role-card role-green">
-    <h4>👤 User / Borrower</h4>
-    <div class="perm">
-      ✅ Can deposit and withdraw funds<br>
-      ✅ Can initiate loan requests<br>
-      ❌ Cannot modify protocol parameters<br>
-      ❌ Cannot access other users' positions
+
+  <!-- ============================================================
+       TAB 4: MONEY MOVEMENT
+       How funds flow end-to-end.
+       ============================================================ -->
+  <div id="money" class="section">
+    <h2>Money Movement</h2>
+    <p class="desc">How funds flow end-to-end: on-ramps, off-ramps, settlement rails, stablecoin dependencies.</p>
+
+    <div class="flow">
+      <div class="node node-green"><b>[Source of Funds]</b>[Description]</div>
+      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
+      <div class="node node-blue"><b>[On-Ramp / Bridge]</b>[Description]</div>
+      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
+      <div class="node node-purple"><b>[Protocol / Pool]</b>[Description]</div>
+      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
+      <div class="node node-amber"><b>[Settlement]</b>[Description]</div>
+      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
+      <div class="node node-green"><b>[Destination]</b>[Description]</div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Settlement Token</h3>
+        <p>[USDC / USDT / etc.]</p>
+      </div>
+      <div class="info-card">
+        <h3>Settlement Time</h3>
+        <p>[Time]</p>
+      </div>
+      <div class="info-card">
+        <h3>Custody Model</h3>
+        <p>[Self-custody / Custodian / Hybrid]</p>
+      </div>
+    </div>
+
+    <div class="callout callout-amber">
+      <div class="callout-title" style="color:#f59e0b;">&#9888; Custody Flag</div>
+      <div class="callout-text">[Flag any points where funds are custodied by a third party or where transparency is limited]</div>
     </div>
   </div>
 
-  <div class="role-card role-purple">
-    <h4>🏛️ Governance</h4>
-    <div class="perm">
-      ✅ Can vote on parameter changes<br>
-      ✅ Can propose new asset listings<br>
-      ❌ Cannot execute changes without timelock<br>
-      ❌ Cannot override admin multisig
+
+  <!-- ============================================================
+       TAB 5: ROLES & ACCESS CONTROL
+       Who controls what — admin keys, multisig, governance.
+       ============================================================ -->
+  <div id="roles" class="section">
+    <h2>Roles &amp; Access Control</h2>
+    <p class="desc">Who controls what &mdash; admin keys, multisig structures, governance, upgrade authority.</p>
+
+    <div class="prose">
+      <div class="highlight-box">
+        <p><strong>Key principle:</strong> [Summarize the role architecture — e.g., separation of powers, multi-sig requirements, etc.]</p>
+      </div>
+
+      <div class="role-card blue">
+        <h3>[Role Name — e.g., Protocol Administrator]</h3>
+        <p>[Brief description of role]</p>
+        <p class="can-do" style="margin-top:0.4rem;">&#10003; Can: [list capabilities]</p>
+        <p class="cant-do">&#10007; Cannot: [list restrictions]</p>
+      </div>
+
+      <div class="role-card green">
+        <h3>[Role Name — e.g., User / Borrower]</h3>
+        <p>[Brief description of role]</p>
+        <p class="can-do" style="margin-top:0.4rem;">&#10003; Can: [list capabilities]</p>
+        <p class="cant-do">&#10007; Cannot: [list restrictions]</p>
+      </div>
+
+      <div class="role-card purple">
+        <h3>[Role Name — e.g., Governance]</h3>
+        <p>[Brief description of role]</p>
+        <p class="can-do" style="margin-top:0.4rem;">&#10003; Can: [list capabilities]</p>
+        <p class="cant-do">&#10007; Cannot: [list restrictions]</p>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ============================================================
-     TAB 6: SECURITY & COMPLIANCE
-     ============================================================ -->
-<div id="security" class="section">
-  <h2>Security &amp; Compliance</h2>
-  <p class="desc">Defense stack, regulatory posture, audit status, and custody model.</p>
 
-  <div class="sec-layers">
-    <div class="sec-layer">
-      <h4>Regulatory Licensing</h4>
-      <p>[Jurisdiction, license type, registration status]</p>
-    </div>
-    <div class="sec-layer">
-      <h4>KYC / AML</h4>
-      <p>[KYC provider, AML monitoring, sanctions screening approach]</p>
-    </div>
-    <div class="sec-layer">
-      <h4>Smart Contract Security</h4>
-      <p>[Audit firm(s), date of last audit, scope, findings]</p>
-    </div>
-    <div class="sec-layer">
-      <h4>Custody Model</h4>
-      <p>[How funds are held — self-custody, qualified custodian, MPC, etc.]</p>
-    </div>
-    <div class="sec-layer">
-      <h4>Operational Security</h4>
-      <p>[Multisig structure, key management, incident response]</p>
-    </div>
-    <div class="sec-layer">
-      <h4>Insurance / Coverage</h4>
-      <p>[Coverage details or "None identified"]</p>
+  <!-- ============================================================
+       TAB 6: SECURITY & COMPLIANCE
+       Defense stack, regulatory posture, audit status.
+       ============================================================ -->
+  <div id="security" class="section">
+    <h2>Security &amp; Compliance</h2>
+    <p class="desc">Defense stack, regulatory posture, audit status, and custody model.</p>
+
+    <div class="sec-layers">
+      <div class="sec-layer"><div class="sec-num">1</div><div class="sec-content"><b>Regulatory Licensing</b><br><span>[Jurisdiction, license type, registration status]</span></div></div>
+      <div class="sec-layer"><div class="sec-num">2</div><div class="sec-content"><b>KYC / AML</b><br><span>[KYC provider, AML monitoring, sanctions screening approach]</span></div></div>
+      <div class="sec-layer"><div class="sec-num">3</div><div class="sec-content"><b>Smart Contract Security</b><br><span>[Audit firm(s), date of last audit, scope, findings]</span></div></div>
+      <div class="sec-layer"><div class="sec-num">4</div><div class="sec-content"><b>Custody Model</b><br><span>[How funds are held — self-custody, qualified custodian, MPC, etc.]</span></div></div>
+      <div class="sec-layer"><div class="sec-num">5</div><div class="sec-content"><b>Operational Security</b><br><span>[Multisig structure, key management, incident response]</span></div></div>
+      <div class="sec-layer"><div class="sec-num">6</div><div class="sec-content"><b>Insurance / Coverage</b><br><span>[Coverage details or "None identified"]</span></div></div>
     </div>
   </div>
-</div>
 
-<!-- ============================================================
-     TAB 7: COMPS & COMPETITORS
-     ============================================================ -->
-<div id="comps" class="section">
-  <h2>Comps &amp; Competitors</h2>
-  <p class="desc">Competitive landscape, positioning, and moat analysis.</p>
 
-  <table class="seq-table">
-    <thead>
-      <tr>
-        <th>Dimension</th>
-        <th>ENTITY_NAME</th>
-        <th>[Competitor A]</th>
-        <th>[Competitor B]</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Type</strong></td>
-        <td>[Type]</td>
-        <td>[Type]</td>
-        <td>[Type]</td>
-      </tr>
-      <tr>
-        <td><strong>TVL / AUM</strong></td>
-        <td><span class="badge badge-green">[Amount]</span></td>
-        <td><span class="badge badge-blue">[Amount]</span></td>
-        <td><span class="badge badge-amber">[Amount]</span></td>
-      </tr>
-      <tr>
-        <td><strong>Chains</strong></td>
-        <td>[Chains]</td>
-        <td>[Chains]</td>
-        <td>[Chains]</td>
-      </tr>
-      <tr>
-        <td><strong>Audit Status</strong></td>
-        <td><span class="badge badge-green">Audited</span></td>
-        <td><span class="badge badge-green">Audited</span></td>
-        <td><span class="badge badge-amber">Partial</span></td>
-      </tr>
-      <tr>
-        <td><strong>Regulatory</strong></td>
-        <td><span class="badge badge-green">Licensed</span></td>
-        <td><span class="badge badge-amber">Pending</span></td>
-        <td><span class="badge badge-red">None</span></td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- ============================================================
+       TAB 7: COMPS & COMPETITORS
+       Check /final-products/ first for previously reviewed entities.
+       ============================================================ -->
+  <div id="comps" class="section">
+    <h2>Comps &amp; Competitors</h2>
+    <p class="desc">Competitive landscape, positioning, and moat analysis.</p>
 
-  <h3>Competitive Moat</h3>
-  <div class="prose">
-    <p>[Analysis of what differentiates this entity from competitors]</p>
-  </div>
-</div>
+    <div class="seq">
+      <table class="seq-table">
+        <thead>
+          <tr><th>Dimension</th><th>ENTITY_NAME</th><th>[Competitor A]</th><th>[Competitor B]</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Type</strong></td><td>[Type]</td><td>[Type]</td><td>[Type]</td></tr>
+          <tr><td><strong>TVL / AUM</strong></td><td><span class="badge badge-green">[Amount]</span></td><td><span class="badge badge-blue">[Amount]</span></td><td><span class="badge badge-amber">[Amount]</span></td></tr>
+          <tr><td><strong>Chains</strong></td><td>[Chains]</td><td>[Chains]</td><td>[Chains]</td></tr>
+          <tr><td><strong>Audit Status</strong></td><td><span class="badge badge-green">Audited</span></td><td><span class="badge badge-green">Audited</span></td><td><span class="badge badge-amber">Partial</span></td></tr>
+          <tr><td><strong>Regulatory</strong></td><td><span class="badge badge-green">Licensed</span></td><td><span class="badge badge-amber">Pending</span></td><td><span class="badge badge-red">None</span></td></tr>
+        </tbody>
+      </table>
+    </div>
 
-<!-- ============================================================
-     TAB 8: RISK FACTORS & OPEN QUESTIONS
-     ============================================================ -->
-<div id="risks" class="section">
-  <h2>Risk Factors &amp; Open Questions</h2>
-  <p class="desc">Key risks, information gaps, and recommended follow-up diligence.</p>
-
-  <div class="callout-red">
-    🔴 <strong>High — [Risk Category]:</strong> [Description of high-severity risk]
+    <div class="prose">
+      <h2>Competitive Moat</h2>
+      <p>[Analysis of what differentiates this entity from competitors]</p>
+    </div>
   </div>
 
-  <div class="callout-amber">
-    🟡 <strong>Medium — [Risk Category]:</strong> [Description of medium-severity risk]
+
+  <!-- ============================================================
+       TAB 8: RISK FACTORS & OPEN QUESTIONS
+       ============================================================ -->
+  <div id="risks" class="section">
+    <h2>Risk Factors &amp; Open Questions</h2>
+    <p class="desc">Key risks, information gaps, and recommended follow-up diligence.</p>
+
+    <div class="callout callout-red">
+      <div class="callout-title" style="color:#ef4444;">High &mdash; [Risk Category]</div>
+      <div class="callout-text">[Description of high-severity risk]</div>
+    </div>
+
+    <div class="callout callout-amber">
+      <div class="callout-title" style="color:#f59e0b;">Medium &mdash; [Risk Category]</div>
+      <div class="callout-text">[Description of medium-severity risk]</div>
+    </div>
+
+    <div class="seq" style="margin-top:1rem;">
+      <table class="seq-table">
+        <thead><tr><th>Risk Type</th><th>Severity</th><th>Description</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td>Smart Contract</td><td><span class="badge badge-amber">Medium</span></td><td style="text-align:left;">[Description]</td><td style="text-align:left;">[Mitigation]</td></tr>
+          <tr><td>Counterparty</td><td><span class="badge badge-red">High</span></td><td style="text-align:left;">[Description]</td><td style="text-align:left;">[Mitigation]</td></tr>
+          <tr><td>Regulatory</td><td><span class="badge badge-green">Low</span></td><td style="text-align:left;">[Description]</td><td style="text-align:left;">[Mitigation]</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose" style="margin-top:1rem;">
+      <h2>Open Questions for Diligence</h2>
+      <div class="highlight-box">
+        <p><strong>Recommended follow-up questions for the Valinor team:</strong></p>
+        <p>1. [Question about team / governance]<br>
+           2. [Question about financials / revenue model]<br>
+           3. [Question about smart contract / technical risk]<br>
+           4. [Question about regulatory status]<br>
+           5. [Question about integration / partnership mechanics]</p>
+      </div>
+    </div>
   </div>
 
-  <h3>Risk Summary</h3>
-  <table class="seq-table">
-    <thead>
-      <tr><th>Risk Type</th><th>Severity</th><th>Description</th><th>Mitigation</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Smart Contract</td>
-        <td><span class="badge badge-amber">Medium</span></td>
-        <td>[Description]</td>
-        <td>[Mitigation]</td>
-      </tr>
-      <tr>
-        <td>Counterparty</td>
-        <td><span class="badge badge-red">High</span></td>
-        <td>[Description]</td>
-        <td>[Mitigation]</td>
-      </tr>
-      <tr>
-        <td>Regulatory</td>
-        <td><span class="badge badge-green">Low</span></td>
-        <td>[Description]</td>
-        <td>[Mitigation]</td>
-      </tr>
-    </tbody>
-  </table>
 
-  <h3>Open Questions for Diligence</h3>
-  <div class="highlight-box">
-    <strong>Recommended follow-up questions for the Valinor team:</strong>
-    <ol style="margin-top: 12px; color: var(--text);">
-      <li>[Question about team / governance]</li>
-      <li>[Question about financials / revenue model]</li>
-      <li>[Question about smart contract / technical risk]</li>
-      <li>[Question about regulatory status]</li>
-      <li>[Question about integration / partnership mechanics]</li>
-    </ol>
-  </div>
-</div>
+  <div class="footer">Valinor Partnership Review &middot; Confidential</div>
 
 </div><!-- /container -->
-
-<div class="footer">
-  Valinor Partnership Review · Confidential · Prepared DATE_LONG
-</div>
 
 <!-- ============================================================
      TAB SWITCHING SCRIPT
      ============================================================ -->
 <script>
-function showTab(tabId) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(tabId).classList.add('active');
-  event.currentTarget.classList.add('active');
-}
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
 </script>
-
 </body>
 </html>

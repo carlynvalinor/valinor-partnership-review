@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiliquid Protocol &mdash; Valinor Partnership Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0f; color: #e0e0e8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; background: linear-gradient(135deg, #7c3aed, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .meta { margin-top: 4px; font-size: 0.75rem; color: #666; }
+  .tabs { display: flex; gap: 0.4rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+  .tab { padding: 0.5rem 1rem; background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 8px; color: #aaa; cursor: pointer; font-size: 0.82rem; transition: all 0.2s; }
+  .tab:hover { border-color: #7c3aed; color: #ddd; }
+  .tab.active { background: #7c3aed22; border-color: #7c3aed; color: #c4b5fd; }
+  .section { display: none; background: #111118; border: 1px solid #2a2a4a; border-radius: 12px; padding: 1.5rem; }
+  .section.active { display: block; }
+  .section h2 { font-size: 1.2rem; margin-bottom: 0.4rem; color: #c4b5fd; }
+  .section .desc { color: #888; font-size: 0.82rem; margin-bottom: 1rem; }
+  .flow { display: flex; flex-direction: column; align-items: center; gap: 0; padding: 1rem; background: #0d0d14; border-radius: 8px; overflow-x: auto; }
+  .flow-row { display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .node { padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.75rem; text-align: center; min-width: 140px; max-width: 240px; line-height: 1.4; }
+  .node b { display: block; font-size: 0.8rem; margin-bottom: 0.2rem; }
+  .node-purple { background: #1a1040; border: 1.5px solid #7c3aed; color: #e0e0e8; }
+  .node-cyan { background: #001828; border: 1.5px solid #06b6d4; color: #e0e0e8; }
+  .node-amber { background: #2a1800; border: 1.5px solid #f59e0b; color: #e0e0e8; }
+  .node-green { background: #0a2818; border: 1.5px solid #10b981; color: #e0e0e8; }
+  .node-red { background: #2a0a0a; border: 1.5px solid #ef4444; color: #e0e0e8; }
+  .node-indigo { background: #1e1b4b; border: 1.5px solid #818cf8; color: #e0e0e8; }
+  .node-blue { background: #0c1929; border: 1.5px solid #0ea5e9; color: #e0e0e8; }
+  .node-gray { background: #1a1a2e; border: 1.5px solid #555; color: #ccc; }
+  .arrow { color: #7c3aed; font-size: 0.7rem; text-align: center; padding: 0.3rem 0; }
+  .arrow-label { color: #999; font-size: 0.65rem; font-style: italic; }
+  .group-box { border: 1px dashed #444; border-radius: 10px; padding: 0.8rem; margin: 0.5rem 0; }
+  .group-box .group-label { font-size: 0.7rem; color: #888; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .conn { display: flex; flex-direction: column; align-items: center; }
+  .conn-line { width: 2px; height: 18px; background: #7c3aed66; }
+  .conn-arrow-down { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #7c3aed; }
+  .seq { background: #0d0d14; border-radius: 8px; padding: 1rem; overflow-x: auto; }
+  .seq-table { width: 100%; min-width: 700px; border-collapse: collapse; }
+  .seq-table th { font-size: 0.72rem; color: #c4b5fd; padding: 0.5rem 0.3rem; border-bottom: 2px solid #333; text-align: center; }
+  .seq-table td { font-size: 0.68rem; padding: 0.25rem 0.3rem; vertical-align: top; text-align: center; color: #bbb; border-bottom: 1px solid #1a1a2e; }
+  .seq-step { background: #1a1040; padding: 0.3rem 0.6rem; border-radius: 4px; display: inline-block; font-size: 0.68rem; color: #c4b5fd; margin: 0.1rem 0; }
+  .seq-atomic { background: #180828; border: 1px solid #7c3aed44; border-radius: 6px; padding: 0.3rem; }
+  .seq-msg { color: #aaa; font-size: 0.65rem; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-top: 1.2rem; }
+  .info-card { background: #12121c; border: 1px solid #2a2a4a; border-radius: 10px; padding: 1rem; }
+  .info-card h3 { font-size: 0.9rem; color: #7c3aed; margin-bottom: 0.4rem; }
+  .info-card p, .info-card li { font-size: 0.8rem; color: #aaa; line-height: 1.5; }
+  .info-card ul { padding-left: 1.2rem; }
+  .info-card li { margin-bottom: 0.25rem; }
+  .code-block { background: #0d0d14; border: 1px solid #2a2a4a; border-radius: 6px; padding: 0.7rem; font-family: 'Courier New', monospace; font-size: 0.72rem; color: #c4b5fd; overflow-x: auto; margin-top: 0.4rem; white-space: pre; }
+  .fee-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.8rem; }
+  .fee-table th { background: #1a1a2e; color: #7c3aed; padding: 0.4rem; text-align: left; border-bottom: 1px solid #2a2a4a; }
+  .fee-table td { padding: 0.4rem; border-bottom: 1px solid #1a1a2e; color: #ccc; }
+  .badge { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.68rem; font-weight: 600; }
+  .badge-red { background: #ef444433; color: #fca5a5; border: 1px solid #ef444455; }
+  .badge-amber { background: #f59e0b33; color: #fcd34d; border: 1px solid #f59e0b55; }
+  .badge-green { background: #10b98133; color: #6ee7b7; border: 1px solid #10b98155; }
+  .badge-blue { background: #0ea5e933; color: #7dd3fc; border: 1px solid #0ea5e955; }
+  .perm-container { display: flex; gap: 1.5rem; flex-wrap: wrap; padding: 1rem; background: #0d0d14; border-radius: 8px; }
+  .perm-column { flex: 1; min-width: 280px; }
+  .perm-column h4 { font-size: 0.78rem; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.6rem; padding-bottom: 0.3rem; border-bottom: 1px solid #333; }
+  .perm-node { padding: 0.6rem 0.8rem; border-radius: 8px; font-size: 0.72rem; margin-bottom: 0.5rem; line-height: 1.4; }
+  .perm-node b { display: block; font-size: 0.78rem; margin-bottom: 0.15rem; }
+  .perm-node .restrict { color: #ef4444; font-size: 0.68rem; }
+  .perm-arrow { text-align: center; color: #7c3aed; font-size: 0.8rem; padding: 0.15rem 0; }
+  .perm-divider { width: 2px; background: #333; min-height: 100px; align-self: stretch; }
+  .sec-layers { display: flex; flex-direction: column; gap: 0; padding: 1rem; background: #0d0d14; border-radius: 8px; }
+  .sec-layer { display: flex; align-items: stretch; border-bottom: 1px solid #1a1a2e; }
+  .sec-layer:last-child { border-bottom: none; }
+  .sec-num { width: 50px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: #7c3aed; flex-shrink: 0; }
+  .sec-content { flex: 1; padding: 0.6rem 0.8rem; }
+  .sec-content b { font-size: 0.78rem; color: #c4b5fd; }
+  .sec-content span { font-size: 0.72rem; color: #aaa; }
+  .callout { margin-top: 0.8rem; padding: 0.5rem; border-radius: 6px; }
+  .callout-red { border: 1px dashed #ef444466; }
+  .callout-amber { border: 1px dashed #f59e0b66; }
+  .callout-blue { border: 1px dashed #0ea5e966; }
+  .callout-title { font-size: 0.72rem; font-weight: 600; margin-bottom: 0.15rem; }
+  .callout-text { font-size: 0.7rem; color: #aaa; }
+
+  /* PROSE CONTENT TABS */
+  .prose { font-size: 0.84rem; color: #ccc; line-height: 1.7; max-width: 900px; }
+  .prose h2 { font-size: 1.15rem; color: #c4b5fd; margin: 1.8rem 0 0.6rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #2a2a4a; }
+  .prose h2:first-child { margin-top: 0; }
+  .prose h3 { font-size: 0.95rem; color: #a78bfa; margin: 1.4rem 0 0.4rem 0; }
+  .prose p { margin-bottom: 0.8rem; }
+  .prose strong { color: #e0e0e8; }
+  .prose code { background: #1a1040; padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.78rem; color: #c4b5fd; }
+  .prose .highlight-box { background: #12121c; border: 1px solid #2a2a4a; border-radius: 8px; padding: 1rem; margin: 0.8rem 0; }
+  .prose .highlight-box p:last-child { margin-bottom: 0; }
+  .prose hr { border: none; border-top: 1px solid #2a2a4a; margin: 1.5rem 0; }
+  .prose .role-card { background: #12121c; border-radius: 8px; padding: 1rem; margin: 0.8rem 0; }
+  .prose .role-card.purple { border-left: 3px solid #7c3aed; }
+  .prose .role-card.amber { border-left: 3px solid #f59e0b; }
+  .prose .role-card.green { border-left: 3px solid #10b981; }
+  .prose .role-card.red { border-left: 3px solid #ef4444; }
+  .prose .role-card.indigo { border-left: 3px solid #818cf8; }
+  .prose .role-card.blue { border-left: 3px solid #0ea5e9; }
+  .prose .can-do { color: #6ee7b7; font-size: 0.78rem; }
+  .prose .cant-do { color: #fca5a5; font-size: 0.78rem; }
+  .prose .fee-list { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 1rem; font-size: 0.82rem; margin: 0.5rem 0; }
+  .prose .fee-list .vol { color: #aaa; } .prose .fee-list .rate { color: #c4b5fd; font-weight: 600; }
+  /* Tab group styling */
+  .tab-group { display: inline-flex; gap: 0; margin-right: 0.8rem; background: #111118; border-radius: 8px; padding: 2px; border: 1px solid #2a2a4a; }
+  .tab-group .tab { border-radius: 6px; border: none; }
+  .tab-group .tab.active { background: #7c3aed33; }
+  .footer { text-align: center; padding: 1.5rem 0 1rem; color: #555; font-size: 0.72rem; border-top: 1px solid #1a1a2e; margin-top: 2rem; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Multiliquid Protocol</h1>
+  <p class="subtitle">Partnership Review &mdash; RWA-Stablecoin Swap Protocol</p>
+  <div class="meta">Prepared by Valinor Credit Team &middot; v1</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('overview')">Overview</button>
+    <button class="tab" onclick="showTab('core')">Core Swap Flow</button>
+    <button class="tab" onclick="showTab('sequence')">Swap Sequence</button>
+    <button class="tab" onclick="showTab('permissions')">Permission Hierarchy</button>
+    <button class="tab" onclick="showTab('security')">Security Model</button>
+    <button class="tab" onclick="showTab('structs')">Data Structures &amp; Fees</button>
+    <button class="tab" onclick="showTab('events')">Event System</button>
+    <button class="tab" onclick="showTab('roles')">Roles &amp; Powers</button>
+  </div>
+
+
+  <!-- ============================================================
+     TAB 0: OVERVIEW (Non-Technical)
+     Plain-language explanation of what Multiliquid is, why it exists,
+     how swaps work, liquidity sources, and who uses it.
+     Written for a general audience - no Solidity, no code.
+     ============================================================ -->
+  <div id="overview" class="section active">
+    <h2>What Is Multiliquid?</h2>
+    <p class="desc">A non-technical overview for anyone - no finance or crypto background required.</p>
+
+    <div class="prose">
+      <div class="highlight-box">
+        <p><strong>The one-sentence version:</strong> Multiliquid is a piece of financial software that lets big institutions instantly swap between digital dollars (stablecoins) and digital Treasury bonds (tokenized real-world assets), 24/7, settling in seconds instead of days.</p>
+        <p>Think of it like a currency exchange booth at an airport, except instead of swapping euros for dollars, you're swapping digital Treasury bonds for digital dollars, and it happens instantly with no middleman.</p>
+      </div>
+
+      <h2>Why Does This Exist?</h2>
+      <p><strong>Problem 1: Tokenized assets are illiquid.</strong> Major financial institutions (BlackRock, Wellington, VanEck) are creating digital token versions of Treasury bonds and money market funds on blockchains. This market has grown past $35 billion. The tokens earn real yield, but if you want to sell them for cash, you typically have to wait days or weeks for a "redemption window." There's almost no way to sell them instantly.</p>
+      <p><strong>Problem 2: Stablecoins can't pay interest anymore.</strong> The GENIUS Act (passed 2025) prohibits stablecoin issuers from paying yield directly to holders. So millions in USDC sitting idle earns nothing.</p>
+      <p><strong>Multiliquid connects these two problems into a solution.</strong> Institutions can instantly swap idle stablecoins into yield-earning tokenized assets, and swap back when they need cash. The stablecoins stay as pure payment tools (legal), and the yield comes from the tokenized assets (regulated investment products). Everyone stays compliant, and capital is always working.</p>
+
+      <h2>How a Swap Works</h2>
+      <p><strong>Step 1 — Ask for a price.</strong> The institution asks "how much USDC would I get for $1M of this Treasury token?" Multiliquid checks the current Net Asset Value (what one share is worth in dollars) and returns an exact answer minus fees. Free and instant.</p>
+      <p><strong>Step 2 — Execute the swap.</strong> The institution submits the swap. In a single atomic transaction (everything happens or nothing does):</p>
+      <div class="highlight-box">
+        <p>Verify the institution is approved and whitelisted &rarr; Confirm the current price &rarr; Check daily trading limits &rarr; Take the Treasury tokens &rarr; Deliver USDC stablecoins &rarr; Collect a small fee</p>
+        <p>All in one transaction, a few seconds. If any step fails, everything is cancelled. There's no scenario where you send tokens but don't receive stablecoins.</p>
+      </div>
+      <p><strong>Step 3 — Done.</strong> USDC in wallet. Treasury tokens sent to the issuer's reserves or liquidity provider's custody. Seconds, not days.</p>
+
+      <h2>Where Does the Liquidity Come From?</h2>
+      <p><strong>Source 1: Stablecoin issuers who mint new coins.</strong> Some stablecoin companies are directly integrated. When a swap happens, they accept the Treasury token into reserves and mint fresh stablecoins on the spot. They get high-quality assets flowing into their reserves. No pre-funding needed.</p>
+      <p><strong>Source 2: Balance sheet providers.</strong> Institutions that pre-deposit stablecoins, essentially saying "I'll buy tokenized Treasuries at a small discount to NAV." They earn the discount spread plus the yield the Treasuries generate.</p>
+
+      <h2>How Is This Different from Uniswap / Crypto Exchanges?</h2>
+      <p><strong>No price fluctuation from trading.</strong> On Uniswap, prices move based on supply and demand. Multiliquid prices are based on the actual Net Asset Value of the asset — determined by the underlying investment, not trading activity. No "slippage."</p>
+      <p><strong>Compliance is built in.</strong> Every asset pair has rules about who can trade. Institutions must be whitelisted. KYC/AML checks are part of the protocol's design. Built for regulated institutions, not retail traders.</p>
+      <p><strong>No speculation.</strong> No governance token, no yield farming, no incentive programs. It's infrastructure — like plumbing for institutional finance.</p>
+
+      <h2>Who Uses It?</h2>
+      <p>Institutional participants only: treasury departments wanting yield on idle stablecoin balances, crypto platforms putting customer stablecoins to work, stablecoin issuers diversifying reserves, and asset managers wanting instant liquidity for their tokenized products.</p>
+      <p>Currently supports assets from Wellington Management, VanEck, Janus Henderson, and Fasanara, with USDC and additional stablecoins being added.</p>
+
+      <h2>Who Built It?</h2>
+      <p><strong>Uniform Labs</strong> — founded by former executives from Standard Chartered, UniCredit, and Allica Bank. The CEO, Will Beeson, previously co-founded Standard Chartered's tokenized asset platform. Background is traditional banking infrastructure, not crypto speculation.</p>
+      <p>Launched December 2025 on Ethereum. Expanding to Solana in early 2026. In February 2026, partnered with Metalayer Ventures for a dedicated 24/7 instant redemption facility on Solana.</p>
+
+      <h2>Fee Structure</h2>
+      <div class="fee-list">
+        <span class="vol">Under $100K</span><span class="rate">0.10% (10 bps)</span>
+        <span class="vol">$100K – $1M</span><span class="rate">0.05% (5 bps)</span>
+        <span class="vol">$1M – $10M</span><span class="rate">0.03% (3 bps)</span>
+        <span class="vol">$10M – $100M</span><span class="rate">0.02% (2 bps)</span>
+        <span class="vol">Over $100M</span><span class="rate">0.01% (1 bps)</span>
+      </div>
+      <p style="margin-top:0.6rem;">So a $10M swap costs about $3,000. All fees are transparent and verifiable on-chain. Stablecoin issuers can also set their own small discount rates and redemption fees.</p>
+
+      <h2>The Big Picture</h2>
+      <p>Multiliquid's thesis: over the next decade, trillions in traditional assets will become blockchain tokens. Those tokens need to be liquid — easily convertible to cash and back. Today, they mostly aren't. Multiliquid wants to be the infrastructure layer connecting tokenized assets to the stablecoin ecosystem, which already moves $30–40 billion per day.</p>
+      <p>The analogy: what SWIFT is to international bank transfers, or Visa's network is to credit cards — not the bank, not the merchant, but the invisible network in the middle that makes everything connect.</p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+     TAB 1: CORE SWAP FLOW
+     Shows how MultiliquidSwapV2 orchestrates swaps across 4 contract
+     categories: Swap Contract, Price Adapter, RWA Delegate, SC Delegate.
+     Contains: 6 quote functions, 6 swap functions, asset ID format.
+     ============================================================ -->
+  <div id="core" class="section">
+    <h2>Core Contract Interaction Flow</h2>
+    <p class="desc">How the four contract categories work together during a swap. MultiliquidSwapV2 orchestrates everything atomically.</p>
+    <div class="flow">
+      <div class="node node-gray"><b>User (KYC'd Wallet)</b></div>
+      <div class="conn"><div class="conn-line"></div></div>
+      <div class="arrow"><span class="arrow-label">1. approve &rarr; 2. calculate (quote) &rarr; 3. swap (exact amounts)</span></div>
+      <div class="conn"><div class="conn-arrow-down"></div></div>
+      <div class="group-box" style="border-color:#7c3aed55; max-width:600px; width:100%;">
+        <div class="group-label" style="color:#7c3aed;">MultiliquidSwapV2 - Central Orchestrator</div>
+        <div class="flow-row">
+          <div class="node node-purple"><b>Validate</b>accepted? whitelisted?<br>amount &gt; 0? not paused?</div>
+          <div class="arrow">&rarr;</div>
+          <div class="node node-purple"><b>Calculate Output</b>NAV &times; (1 - discount)<br>- protocolFee<br>- redemptionFee</div>
+          <div class="arrow">&rarr;</div>
+          <div class="node node-purple"><b>Route to Delegates</b></div>
+        </div>
+      </div>
+      <div class="flow-row" style="gap:2rem; margin-top:0.8rem;">
+        <div style="text-align:center;">
+          <div class="arrow"><span class="arrow-label">getPrice()</span></div>
+          <div class="node node-cyan"><b>Price Adapter</b>getPrice() &rarr; USD NAV<br>WAD format (1e18 = $1)</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="arrow"><span class="arrow-label">risk check</span></div>
+          <div class="node node-green"><b>RWA Delegate (optional)</b>checkRWAIn / checkRWAOut<br>daily volume limits<br>per-wallet, 24h rolling</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="arrow"><span class="arrow-label">deploy()</span></div>
+          <div class="group-box" style="border-color:#f59e0b55;">
+            <div class="group-label" style="color:#f59e0b;">Stablecoin Delegate</div>
+            <div class="flow-row" style="gap:0.5rem;">
+              <div class="node node-amber" style="min-width:120px;"><b>Mint/Burn</b>Issuer mints<br>against reserves</div>
+              <div class="node node-amber" style="min-width:120px;"><b>Balance Sheet</b>Pre-deposited<br>from custody</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-row" style="gap:2rem; margin-top:0.8rem;">
+        <div class="node node-gray" style="min-width:auto;"><b>Fee Wallet</b>protocol fee deducted</div>
+        <div class="node node-gray" style="min-width:auto;"><b>Events Emitted</b>indexed by asset + user</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>6 Quote Functions (View / Gas-Free)</h3>
+        <!-- All view functions: no gas, no state changes. Integrators call these first to get exact output amounts. -->
+        <div class="code-block">calculateStableAmt(scID, rwaID, rwaAmt)
+  -> (stableAmt, feeAmt)
+
+calculateRWAAmt(scID, rwaID, stableAmt)
+  -> (rwaAmt, feeAmt)
+
+calculateStablecoinRequired(scID, rwaID, rwaAmt)
+  -> (stableAmt, feeAmt)
+
+calculateRWARequired(scID, rwaID, stableAmt)
+  -> (rwaAmt, feeAmt)
+
+calculateRWAToRWA(scID, rwaInID, rwaOutID, amt)
+calculateStablecoinToStablecoin(...)</div>
+      </div>
+      <div class="info-card">
+        <h3>6 Swap Functions (State-Changing)</h3>
+        <!-- State-changing: require nonReentrant + whenNotPaused. All follow Checks-Effects-Interactions pattern. -->
+        <div class="code-block">swapIntoStablecoin(SwapParams)
+  RWA -> Stablecoin ExactIn
+
+swapIntoStablecoinExactOut(SwapParams)
+  RWA -> exact Stablecoin amount
+
+swapIntoRWA(SwapParams)
+  Stablecoin -> RWA ExactIn
+
+swapIntoRWAExactOut(SwapParams)
+  Stablecoin -> exact RWA amount
+
+swapRWAToRWA(RWAToRWAParams)
+  RWA -> RWA via intermediate SC pricing
+
+swapStablecoinToStablecoin(S2SParams)
+  SC -> SC with useDelegateForOut flag</div>
+      </div>
+      <div class="info-card">
+        <h3>Key Design Rule: No Slippage Tolerance</h3>
+        <p>Unlike AMMs, all pricing is <strong>deterministic NAV-based</strong>. The calculate functions return exact amounts. Integrators must use these exact values - do NOT add slippage buffers. If NAV changes between quote and execution, the on-chain calculation uses the current NAV and the swap reverts if bounds are violated.</p>
+      </div>
+      <div class="info-card">
+        <h3>Asset Identification</h3>
+        <p>Assets use <code>bytes32</code> IDs (not addresses). Generated via <code>keccak256</code> of admin-chosen strings. Mainnet IDs:</p>
+        <div class="code-block">ULTRA: 0x2e6e8e...892fcd
+JTRSY:  0x6c960f...06cc22
+WTGXX:  0xd6f4e7...73fc21
+BENJI:  0x509a71...1bc547c
+USTB:   0x6f6403...77da68
+USDC:   0x58e27f...1823b4</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+     TAB 2: SWAP SEQUENCE (RWA → Stablecoin)
+     Step-by-step atomic execution. Steps 7-13 are inside a single
+     EVM transaction - all succeed or all revert. No partial state.
+     ============================================================ -->
+  <div id="sequence" class="section">
+    <h2>Swap Execution Sequence (RWA &rarr; Stablecoin)</h2>
+    <p class="desc">Step-by-step atomic execution. All steps inside the atomic box either all succeed or all revert.</p>
+    <div class="seq">
+      <table class="seq-table">
+        <thead><tr><th style="width:5%;">#</th><th style="width:12%;">From</th><th style="width:10%;"></th><th style="width:12%;">To</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>User</td><td>&rarr;</td><td>SwapV2</td><td style="text-align:left;"><span class="seq-step">calculateStableAmt(scID, rwaID, rwaAmt)</span><br><span class="seq-msg">Gas-free quote: returns (stableAmt, feeAmt)</span></td></tr>
+          <tr><td>2</td><td>SwapV2</td><td>&rarr;</td><td>Price Adapter</td><td style="text-align:left;"><span class="seq-step">getPrice(rwaID)</span> <span class="seq-msg">Returns NAV in WAD</span></td></tr>
+          <tr><td>3</td><td>SwapV2</td><td>&rarr;</td><td>SC Delegate</td><td style="text-align:left;"><span class="seq-step">getDiscountRate(rwaID)</span> <span class="seq-msg">Returns issuer-set discount</span></td></tr>
+          <tr><td>4</td><td>SwapV2</td><td></td><td></td><td style="text-align:left;"><span class="seq-msg">Compute: output = NAV &times; (1 - discount) - fee</span></td></tr>
+          <tr><td>5</td><td>User</td><td>&rarr;</td><td>RWA Token</td><td style="text-align:left;"><span class="seq-step">approve(swapAddr, rwaAmount)</span></td></tr>
+          <tr><td>6</td><td>User</td><td>&rarr;</td><td>SwapV2</td><td style="text-align:left;"><span class="seq-step">swapIntoStablecoin(params)</span></td></tr>
+          <tr><td colspan="5" style="padding:0.5rem;"><div class="seq-atomic">
+            <div style="text-align:center; color:#7c3aed; font-size:0.72rem; font-weight:600; margin-bottom:0.3rem;">ATOMIC - All Steps Below Succeed or Entire Tx Reverts</div>
+            <table class="seq-table" style="margin:0;"><tbody>
+              <tr><td style="width:5%;">7</td><td style="width:12%;">SwapV2</td><td style="width:10%;">&rarr;</td><td style="width:12%;">SwapV2</td><td style="text-align:left;"><span class="seq-step">validate</span> <span class="seq-msg">accepted? whitelisted? amount&gt;0? not paused?</span></td></tr>
+              <tr><td>8</td><td>SwapV2</td><td>&rarr;</td><td>Price Adapter</td><td style="text-align:left;"><span class="seq-step">getPrice(rwaID)</span> <span class="seq-msg">Confirm current NAV</span></td></tr>
+              <tr><td>9</td><td>SwapV2</td><td>&rarr;</td><td>RWA Delegate</td><td style="text-align:left;"><span class="seq-step">checkRWAOut(user, amt, metadata)</span> <span class="seq-msg">Volume limit check</span></td></tr>
+              <tr><td>10</td><td>SwapV2</td><td>&rarr;</td><td>SC Delegate</td><td style="text-align:left;"><span class="seq-step">deploy(user, rwaID, amt, output)</span></td></tr>
+              <tr><td>11</td><td>SC Delegate</td><td>&rarr;</td><td>Custody</td><td style="text-align:left;"><span class="seq-msg">Transfer RWA to issuer reserves</span></td></tr>
+              <tr><td>12</td><td>Liquidity</td><td>&rarr;</td><td>User</td><td style="text-align:left;"><span class="seq-msg">Mint or transfer stablecoins to user</span></td></tr>
+              <tr><td>13</td><td>SwapV2</td><td>&rarr;</td><td>Fee Wallet</td><td style="text-align:left;"><span class="seq-msg">Deduct protocol fee</span></td></tr>
+            </tbody></table>
+          </div></td></tr>
+          <tr><td>14</td><td>SwapV2</td><td></td><td></td><td style="text-align:left;"><span class="seq-step">emit SwapIntoStablecoin</span> <span class="seq-msg">Indexed: stablecoinID, rwaID, user</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Modifiers on All Swap Functions</h3>
+        <!-- Every swap fn has these 2 modifiers. nonReentrant from OZ ReentrancyGuardUpgradeable. whenNotPaused from OZ PausableUpgradeable. -->
+        <div class="code-block">function swapIntoStablecoin(SwapParams calldata params)
+    external
+    nonReentrant     // prevents reentrancy
+    whenNotPaused    // global pause check
+{
+    // Checks-Effects-Interactions pattern
+}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+     TAB 3: PERMISSION HIERARCHY & RBAC
+     Two-column layout: Protocol RBAC (left) vs External Issuer Roles (right).
+     CRITICAL: These are independent security domains with NO cross-boundary
+     control. Protocol admin CANNOT grant/revoke issuer roles.
+     ============================================================ -->
+  <div id="permissions" class="section">
+    <h2>Permission Hierarchy &amp; Role-Based Access Control</h2>
+    <p class="desc">Protocol roles (left) and external issuer roles (right) are completely independent security domains. No arrows cross the boundary.</p>
+    <div class="perm-container">
+      <div class="perm-column">
+        <h4>Protocol RBAC (MultiliquidSwapV2)</h4>
+        <div class="perm-node node-purple">
+          <b>DEFAULT_ADMIN_ROLE</b>
+          Multi-sig required<br>
+          Upgrade all UUPS contracts via _authorizeUpgrade()<br>
+          Grant/revoke <em>internal</em> roles only<br>
+          Modify core protocol parameters<br>
+          Emergency recovery operations
+        </div>
+        <div class="perm-arrow">&darr; grants</div>
+        <div style="display:flex; gap:0.5rem;">
+          <div class="perm-node node-purple" style="flex:1;">
+            <b>OPERATOR_ROLE</b>
+            Multi-sig required<br>
+            acceptRWA() / acceptStablecoin() on Swap Contract registry<br>
+            Update price adapters<br>
+            Configure fee tiers<br>
+            <span class="restrict">Cannot upgrade contracts</span><br>
+            <span class="restrict">Cannot modify access control</span>
+          </div>
+          <div class="perm-node node-red" style="flex:1;">
+            <b>PAUSE_ROLE</b>
+            Security ops team<br>
+            pause() / unpause() on MultiliquidSwap<br>
+            Halts ALL swaps globally<br>
+            Quotes still work<br>
+            Admin functions still accessible
+          </div>
+        </div>
+        <div class="perm-arrow" style="margin-top:0.5rem;">&darr; interacts with</div>
+        <div class="perm-node node-indigo">
+          <b>MULTILIQUID_SWAP_CONTRACT</b>
+          Special role granted to SwapV2 contract address<br>
+          Only caller allowed to invoke deploy() on Stablecoin Delegates<br>
+          Only caller allowed to invoke checkRWAIn/Out() on RWA Delegates<br>
+          Ensures only the orchestrator can trigger token movements
+        </div>
+        <div class="callout callout-red">
+          <div class="callout-title" style="color:#ef4444;">Security Boundary</div>
+          <div class="callout-text">DEFAULT_ADMIN_ROLE cannot grant/revoke Issuer Admin roles. Those are external to the protocol RBAC and set at delegate deployment time. Protocol governance has zero control over issuer risk parameters.</div>
+        </div>
+      </div>
+      <div class="perm-divider"></div>
+      <div class="perm-column">
+        <h4>External Roles (Set at Delegate Deployment)</h4>
+        <div class="perm-node node-amber">
+          <b>Stablecoin Issuer Admin</b>
+          Per-delegate, sovereign - one per stablecoin<br>
+          setRWADiscountRate(rwaID, rate)<br>
+          setRWARedemptionFee(rwaID, rate)<br>
+          whitelistRWA(rwaID, bool) - per-stablecoin RWA whitelist<br>
+          setCustodyAddress(addr)<br>
+          pause() own delegate only<br>
+          <span class="restrict">Cannot affect other issuers</span><br>
+          <span class="restrict">Protocol admin cannot revoke this role</span>
+        </div>
+        <div class="perm-node node-green" style="margin-top:0.5rem;">
+          <b>RWA Issuer Admin</b>
+          Per-delegate, sovereign - one per RWA (if delegate exists)<br>
+          setDailyVolumeLimit()<br>
+          Adjust risk parameters<br>
+          pause() own delegate only<br>
+          <span class="restrict">Cannot affect other RWAs</span><br>
+          <span class="restrict">Protocol admin cannot revoke this role</span>
+        </div>
+        <div class="callout callout-amber">
+          <div class="callout-title" style="color:#f59e0b;">How Assets Get Registered</div>
+          <div class="callout-text">
+            1. Issuer deploys their own delegate contract (sets themselves as admin)<br>
+            2. Issuer configures delegate: custody addresses, RWA whitelists, fees<br>
+            3. OPERATOR_ROLE calls acceptRWA() or acceptStablecoin() on SwapV2 to register the delegate address<br>
+            4. The Operator registers the delegate but has zero control over it<br>
+            5. Issuer retains full sovereignty over their delegate at all times
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Key Security Boundaries</h3>
+        <ul>
+          <li>DEFAULT_ADMIN_ROLE and OPERATOR_ROLE should <strong>never be held by EOAs</strong> - multi-sig only</li>
+          <li>Issuer Admins are <strong>external roles</strong> - the protocol admin cannot grant or revoke them</li>
+          <li>Each stablecoin delegate is an <strong>independent security domain</strong> - one issuer cannot affect another</li>
+          <li>PAUSE_ROLE can halt the entire protocol but cannot modify state or steal funds</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Multi-Level Pause</h3>
+        <ul>
+          <li><span class="badge badge-red">Global Pause</span> PAUSE_ROLE pauses MultiliquidSwap - all swaps revert, quotes still work</li>
+          <li><span class="badge badge-amber">Stablecoin Delegate Pause</span> Issuer admin pauses their delegate - only that stablecoin affected</li>
+          <li><span class="badge badge-green">RWA Delegate Pause</span> Issuer admin pauses their delegate - only that RWA affected</li>
+        </ul>
+        <p style="margin-top:0.4rem">Unpause requires: root cause analysis + fix tested + security review + explicit unpause tx.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+     TAB 4: SECURITY MODEL - 6-LAYER DEFENSE STACK
+     L1: Solidity 0.8.30 (checked arithmetic)
+     L2: OpenZeppelin + Solady libraries
+     L3: CEI pattern, nonReentrant, whenNotPaused
+     L4: UUPS proxies, storage gaps, initializer guards
+     L5: 835 unit tests, fuzz testing, Slither, 3rd party audit
+     L6: Event indexing, tx monitoring, oracle deviation alerts
+     ============================================================ -->
+  <div id="security" class="section">
+    <h2>Security Model &amp; Defense Layers</h2>
+    <p class="desc">Comprehensive security stack from compiler level through operational monitoring.</p>
+    <div class="sec-layers">
+      <div class="sec-layer"><div class="sec-num">L1</div><div class="sec-content"><b>Compiler</b><br><span>Solidity 0.8.30 - built-in overflow/underflow protection, checked arithmetic by default</span></div></div>
+      <div class="sec-layer"><div class="sec-num">L2</div><div class="sec-content"><b>Libraries</b><br><span>OpenZeppelin Upgradeable (AccessControl, ReentrancyGuard, Pausable, SafeERC20, UUPS) + Solady FixedPointMathLib for WAD/RAY precision math</span></div></div>
+      <div class="sec-layer"><div class="sec-num">L3</div><div class="sec-content"><b>Contract Design</b><br><span>Checks-Effects-Interactions pattern on all swap functions, nonReentrant on all state-changing swaps, whenNotPaused guards, input validation on every function</span></div></div>
+      <div class="sec-layer"><div class="sec-num">L4</div><div class="sec-content"><b>Upgrade Safety</b><br><span>UUPS Proxy Pattern (upgrade logic in implementation, not proxy), storage gaps (__gap[50]), initializer guards, multi-sig required for _authorizeUpgrade()</span></div></div>
+      <div class="sec-layer"><div class="sec-num">L5</div><div class="sec-content"><b>Testing</b><br><span>835 unit tests including fuzz testing, Slither static analysis, third-party security audit, testnet deployment (Sepolia, Arbitrum Sepolia)</span></div></div>
+      <div class="sec-layer"><div class="sec-num">L6</div><div class="sec-content"><b>Operational</b><br><span>Event indexing for all state changes, transaction monitoring for unusual patterns, price oracle deviation alerts, incident response protocol</span></div></div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Reentrancy Protection</h3>
+        <!-- OpenZeppelin ReentrancyGuardUpgradeable: sets _status = _ENTERED before fn body, reverts on re-entry -->
+        <div class="code-block">function swapIntoStablecoin(...)
+    external
+    nonReentrant
+    whenNotPaused
+{
+    // 1. Checks: validate inputs
+    // 2. Effects: update state
+    // 3. Interactions: external calls
+}</div>
+      </div>
+      <div class="info-card">
+        <h3>SafeERC20 for All Token Ops</h3>
+        <!-- Wraps low-level call, checks return value OR reverts on false. Handles USDT-style no-return tokens. -->
+        <p>Handles non-standard ERC20 implementations. Reverts on failed transfers even if token returns <code>false</code>.</p>
+        <div class="code-block">using SafeERC20 for IERC20;
+IERC20(rwaToken).safeTransferFrom(
+    user, custody, amount
+);</div>
+      </div>
+      <div class="info-card">
+        <h3>Volume Limits (RWA Delegate)</h3>
+        <!-- Called by MULTILIQUID_SWAP_CONTRACT role only. Rolling 24h window, per-wallet, set by RWA Issuer Admin. -->
+        <div class="code-block">// Per-wallet daily volume tracking
+function checkRWAOut(
+    address user,
+    uint256 amount,
+    bytes calldata metadata
+) external returns (bool) {
+    uint256 current = dailyVolume[user];
+    require(
+        current + amount &lt;= dailyLimit,
+        "Daily limit exceeded"
+    );
+    dailyVolume[user] = current + amount;
+    return true;
+}</div>
+        <p style="margin-top:0.4rem">Rolling 24-hour reset window. Per-wallet, configurable by RWA Issuer Admin.</p>
+      </div>
+      <div class="info-card">
+        <h3>UUPS Upgrade Pattern</h3>
+        <!-- UUPS = Universal Upgradeable Proxy Standard. Upgrade logic lives in implementation, not proxy. Safer than transparent proxy. -->
+        <div class="code-block">// Storage gap for future variables
+uint256[50] private __gap;
+
+function _authorizeUpgrade(
+    address newImplementation
+) internal override
+  onlyRole(DEFAULT_ADMIN_ROLE)
+{}</div>
+        <p style="margin-top:0.4rem">New vars only at end. No removal/reorder. Storage gaps provide buffer.</p>
+      </div>
+      <div class="info-card">
+        <h3>Token Assumptions</h3>
+        <ul>
+          <li>Tokens must NOT implement transfer fees</li>
+          <li>Tokens must NOT be rebasing</li>
+          <li>Tokens must NOT break atomicity</li>
+          <li>Tokens must follow standard ERC20 behavior</li>
+          <li>Price oracles must remain available</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Incident Response Protocol</h3>
+        <ul>
+          <li>1. <strong>Detection</strong> - monitoring alerts security team</li>
+          <li>2. <strong>Assessment</strong> - evaluate severity + impact</li>
+          <li>3. <strong>Pause</strong> - immediate pause of affected components</li>
+          <li>4. <strong>Communication</strong> - transparent disclosure</li>
+          <li>5. <strong>Remediation</strong> - fix development + testing</li>
+          <li>6. <strong>Deployment</strong> - upgrade via multi-sig</li>
+          <li>7. <strong>Post-Mortem</strong> - report + process improvement</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+     TAB 5: DATA STRUCTURES & FEE MODEL
+     On-chain Solidity structs, volume-based fee tiers, pricing formula.
+     All values in WAD precision (1e18 = 100% or $1).
+     ============================================================ -->
+  <div id="structs" class="section">
+    <h2>Data Structures &amp; Fee Model</h2>
+    <p class="desc">On-chain structs, fee tier schedule, and pricing formula.</p>
+    <div class="info-grid">
+      <div class="info-card"><h3>RWAInfo Struct</h3><!-- Stored in mapping(bytes32 => RWAInfo) keyed by keccak256 asset ID --><div class="code-block">struct RWAInfo {
+    bool accepted;          // swaps enabled?
+    uint8 decimals;         // e.g. 6 or 18
+    address rwaDelegate;    // optional (address(0) if none)
+    address priceAdapter;   // USD oracle
+    bool riskControlsActive;// delegate checks enabled?
+}</div></div>
+      <div class="info-card"><h3>StablecoinInfo Struct</h3><!-- Stored in mapping(bytes32 => StablecoinInfo). stablecoinDelegate is REQUIRED (unlike RWA delegate). --><div class="code-block">struct StablecoinInfo {
+    bool accepted;              // swaps enabled?
+    uint8 decimals;             // e.g. 6
+    address stablecoinDelegate; // REQUIRED
+    address priceAdapter;       // USD oracle
+}</div></div>
+      <div class="info-card"><h3>FeeTier Struct</h3><div class="code-block">struct FeeTier {
+    uint128 maxVolume; // tier ceiling (WAD)
+    uint128 fee;       // fee rate (WAD, 1e18=100%)
+}</div></div>
+      <div class="info-card"><h3>SwapParams</h3><!-- Passed to swapIntoStablecoin/swapIntoRWA and their ExactOut variants. metadata bytes = compliance pass-through. --><div class="code-block">struct SwapParams {
+    bytes32 stablecoinID;
+    uint256 stablecoinAmount;
+    bytes32 rwaID;
+    uint256 rwaAmount;
+    bytes stablecoinMetadata; // compliance data
+    bytes rwaMetadata;        // compliance data
+}</div></div>
+      <div class="info-card"><h3>RWAToRWAParams</h3><div class="code-block">struct RWAToRWAParams {
+    bool exactOut;
+    bytes32 stablecoinID;    // pricing stablecoin
+    bytes32 rwaInID;
+    uint256 rwaInAmount;
+    bytes32 rwaOutID;
+    uint256 rwaOutAmount;
+    bytes rwaInMetadata;
+    bytes rwaOutMetadata;
+}</div></div>
+      <div class="info-card"><h3>S2SParams</h3><div class="code-block">struct S2SParams {
+    bool exactOut;
+    bool useDelegateForStablecoinOut;
+    bytes32 stablecoinInID;
+    uint256 stablecoinInAmount;
+    bytes32 stablecoinOutID;
+    uint256 stablecoinOutAmount;
+    bytes stablecoinInMetadata;
+    bytes stablecoinOutMetadata;
+}</div><p style="margin-top:0.4rem"><code>useDelegateForStablecoinOut</code>: true = output SC's delegate handles swap; false = input SC's delegate.</p></div>
+    </div>
+    <h3 style="margin-top:1.5rem; color:#c4b5fd;">Protocol Fee Tiers (Volume-Based)</h3>
+    <table class="fee-table">
+      <thead><tr><th>Volume From</th><th>Volume To</th><th>Fee Rate</th><th>Basis Points</th></tr></thead>
+      <tbody>
+        <tr><td>$0</td><td>$100,000</td><td>0.10%</td><td>10 bps</td></tr>
+        <tr><td>$100,000</td><td>$1,000,000</td><td>0.05%</td><td>5 bps</td></tr>
+        <tr><td>$1,000,000</td><td>$10,000,000</td><td>0.03%</td><td>3 bps</td></tr>
+        <tr><td>$10,000,000</td><td>$100,000,000</td><td>0.02%</td><td>2 bps</td></tr>
+        <tr><td>$100,000,000</td><td>+</td><td>0.01%</td><td>1 bps</td></tr>
+      </tbody>
+    </table>
+    <div class="info-grid" style="margin-top:1rem;">
+      <div class="info-card"><h3>Pricing Formula</h3><div class="code-block">Swap Output = NAV x (1 - discountRate) - protocolFee
+
+Where:
+  NAV          = from Price Adapter (WAD, 1e18 = $1)
+  discountRate = set by issuer per RWA (WAD)
+  protocolFee  = volume-based tier (WAD)
+
+For Stablecoin to RWA, additional:
+  redemptionFee = charged by issuer (WAD)
+
+For SC to SC swaps, additional:
+  acceptanceFee = per stablecoin pair (WAD)</div></div>
+      <div class="info-card"><h3>Fee/Discount Caps</h3><ul>
+        <li><strong>Max discount rate</strong>: configurable, typically 20% (2e17)</li>
+        <li><strong>Max redemption fee</strong>: configurable, typically 5% (5e16)</li>
+        <li><strong>All math</strong>: WAD precision (18 decimals) via Solady FixedPointMathLib</li>
+        <li><strong>All fees</strong>: accumulated transparently in protocol fee wallet on-chain</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+     TAB 6: EVENT SYSTEM
+     Every state change emits an indexed event for off-chain monitoring.
+     Up to 3 indexed params per event (EVM limit). Enables efficient
+     log filtering by asset pair, user, or stablecoin.
+     ============================================================ -->
+  <div id="events" class="section">
+    <h2>Event System</h2>
+    <p class="desc">Comprehensive on-chain event emission for every state change. All indexed fields enable efficient log filtering.</p>
+    <div class="info-grid">
+      <div class="info-card"><h3>Swap Events</h3><!-- Emitted at end of each swap fn. Indexed fields enable efficient ethers.js/viem filtering. --><div class="code-block">event SwapIntoStablecoin(
+    bytes32 indexed stablecoinID,
+    bytes32 indexed rwaID,
+    address indexed user,
+    uint256 stablecoinAmt, uint256 rwaAmt,
+    uint256 feeAmt,
+    bytes stablecoinMetadata, bytes rwaMetadata
+);
+
+event SwapIntoRWA(
+    bytes32 indexed rwaID,
+    bytes32 indexed stablecoinID,
+    address indexed user,
+    uint256 rwaAmt, uint256 stablecoinAmt,
+    uint256 feeAmt, uint256 redemptionFeeAmt,
+    bytes stablecoinMetadata, bytes rwaMetadata
+);
+
+event RWAToRWASwap(
+    bytes32 indexed rwaInID,
+    bytes32 indexed rwaOutID,
+    bytes32 indexed stablecoinID,
+    address user,
+    uint256 rwaInAmount, uint256 rwaOutAmount,
+    uint256 protocolFeeAmt,
+    uint256 redemptionFeeAmt,
+    bytes rwaInMetadata, bytes rwaOutMetadata
+);
+
+event StablecoinToStablecoinSwap(
+    bytes32 indexed stablecoinInID,
+    bytes32 indexed stablecoinOutID,
+    address indexed user,
+    uint256 scInAmt, uint256 scOutAmt,
+    uint256 protocolFeeAmt,
+    uint256 acceptanceFeeAmt,
+    uint256 redemptionFeeAmt,
+    bytes scInMetadata, bytes scOutMetadata
+);</div></div>
+      <div class="info-card"><h3>Administrative Events</h3><!-- Emitted by OPERATOR_ROLE (acceptance) and ISSUER_ADMIN (discount/redemption) actions. --><div class="code-block">event RWAAcceptanceSet(
+    bytes32 indexed rwaID,
+    address indexed delegate,
+    address indexed assetAddress,
+    uint8 decimals, bool accepted
+);
+
+event StablecoinAcceptanceSet(
+    bytes32 indexed stablecoinID,
+    address indexed delegate,
+    address indexed assetAddress,
+    uint8 decimals, bool accepted,
+    bool externalSwapper
+);
+
+event DiscountRateSet(
+    bytes32 indexed stablecoinID,
+    bytes32 indexed rwaID,
+    uint256 rate
+);
+
+event RedemptionFeeSet(
+    bytes32 indexed stablecoinID,
+    bytes32 indexed rwaID,
+    uint256 rate
+);
+
+event MultiliquidFeeTiersSet(
+    FeeTier[] feeTiers
+);
+
+event UpdateRWAUSDValue(
+    bytes32 indexed rwaID,
+    address priceAdapter
+);</div></div>
+      <div class="info-card"><h3>ExactOut Variants</h3><div class="code-block">event SwapIntoStablecoinExactOut(
+    bytes32 indexed stablecoinID,
+    bytes32 indexed rwaID,
+    address indexed user,
+    uint256 stablecoinAmt, uint256 rwaAmt,
+    uint256 feeAmt,
+    bytes stablecoinMetadata, bytes rwaMetadata
+);
+
+event SwapIntoRWAExactOut(
+    bytes32 indexed rwaID,
+    bytes32 indexed stablecoinID,
+    address indexed user,
+    uint256 rwaAmt, uint256 stablecoinAmt,
+    uint256 feeAmt, uint256 redemptionFeeAmt,
+    bytes stablecoinMetadata, bytes rwaMetadata
+);
+
+event StablecoinAcceptanceFeeSet(
+    bytes32 indexed stablecoinOutID,
+    address indexed stablecoinIn,
+    uint256 rate
+);
+
+event StablecoinRedemptionFeeSet(
+    bytes32 indexed stablecoinOutID,
+    address indexed stablecoinIn,
+    uint256 rate
+);</div></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+     TAB 7: ROLES & POWERS (Non-Technical)
+     Plain-language explanation of all 6 system roles, what each can
+     and cannot do, how they interact, and the 3-level pause system.
+     Written for a general audience.
+     ============================================================ -->
+  <div id="roles" class="section">
+    <h2>Roles, Powers &amp; Limitations</h2>
+    <p class="desc">Who controls what in the system, and (equally important) what each role cannot do.</p>
+
+    <div class="prose">
+      <div class="highlight-box">
+        <p><strong>Key principle:</strong> Roles are split into two completely separate groups that cannot interfere with each other. The Multiliquid team controls the protocol software (3 roles). Financial institutions control their own business parameters (2 roles). A 6th role is held by the software itself, not any person.</p>
+      </div>
+
+      <h2>Protocol Roles (Multiliquid Team)</h2>
+
+      <div class="role-card purple">
+        <h3>1. Protocol Administrator (DEFAULT_ADMIN_ROLE)</h3>
+        <p>The highest-authority role — think "board of directors" for the core software. Held by a multi-signature wallet (multiple people must approve any action).</p>
+        <p class="can-do" style="margin-top:0.4rem;">✅ Can: upgrade protocol software, grant/revoke Operator and Pause roles, modify core parameters, emergency recovery</p>
+        <p class="cant-do">❌ Cannot: grant/revoke issuer roles, change issuer fees or settings, whitelist assets in issuer domains, move user or issuer funds, act unilaterally (multi-sig required)</p>
+      </div>
+
+      <div class="role-card purple">
+        <h3>2. Operator (OPERATOR_ROLE)</h3>
+        <p>Day-to-day operations — manages which assets the protocol supports. Also multi-sig.</p>
+        <p class="can-do" style="margin-top:0.4rem;">✅ Can: register new assets via <code>acceptRWA()</code> / <code>acceptStablecoin()</code>, update price adapters, configure protocol fee tiers</p>
+        <p class="cant-do">❌ Cannot: upgrade software, grant/revoke any roles, change issuer settings, pause/unpause, move funds</p>
+        <p style="margin-top:0.4rem; font-size:0.78rem; color:#aaa;"><strong>Important:</strong> When the Operator "registers" an asset, they only record the delegate's address in the registry. They have zero control over how the delegate operates. The issuer deployed and configured it independently.</p>
+      </div>
+
+      <div class="role-card red">
+        <h3>3. Pause Role (PAUSE_ROLE)</h3>
+        <p>Emergency stop button. Exists purely for security incidents.</p>
+        <p class="can-do" style="margin-top:0.4rem;">✅ Can: pause entire protocol (all swaps immediately fail), unpause to resume</p>
+        <p class="cant-do">❌ Cannot: modify settings/fees/parameters, move funds, grant/revoke roles, upgrade software</p>
+        <p style="margin-top:0.4rem; font-size:0.78rem; color:#aaa;">When paused: swaps revert, price quotes still work (read-only), admin functions still accessible, issuer delegate management unaffected.</p>
+      </div>
+
+      <h2>Issuer Roles (Financial Institutions)</h2>
+      <p>Completely independent of the protocol team. Set when the issuer deploys their own delegate contract. The protocol Administrator cannot grant, revoke, or modify them.</p>
+
+      <div class="role-card amber">
+        <h3>4. Stablecoin Issuer Admin</h3>
+        <p>Authority over a single stablecoin's integration. Each stablecoin (USDC, etc.) has its own Issuer Admin controlling only their own stablecoin.</p>
+        <p class="can-do" style="margin-top:0.4rem;">✅ Can: set discount rates per asset, set redemption fees, whitelist/blacklist tokenized assets for their stablecoin, set custody address, pause own delegate only</p>
+        <p class="cant-do">❌ Cannot: affect other stablecoins, modify core protocol, pause entire protocol, access other delegates' funds</p>
+        <p style="margin-top:0.4rem; font-size:0.78rem; color:#aaa;"><strong>Example:</strong> If Issuer A decides a real estate token is too risky, they remove it from their whitelist. Issuer B can still support it through their own delegate. Independent business decisions.</p>
+      </div>
+
+      <div class="role-card green">
+        <h3>5. RWA Issuer Admin</h3>
+        <p>Authority over a specific tokenized asset's risk controls. Only needed for assets requiring custom risk management (e.g., daily volume limits).</p>
+        <p class="can-do" style="margin-top:0.4rem;">✅ Can: set daily volume limits (per wallet per day), adjust risk parameters, pause own delegate only</p>
+        <p class="cant-do">❌ Cannot: affect other assets, modify core protocol, pause protocol or other delegates, change stablecoin settings</p>
+      </div>
+
+      <div class="role-card indigo">
+        <h3>6. Swap Contract Role (MULTILIQUID_SWAP_CONTRACT)</h3>
+        <p>Not a person — a permission granted to the swap contract itself. Ensures only the official swap logic can trigger sensitive operations.</p>
+        <p class="can-do" style="margin-top:0.4rem;">✅ Can: call <code>deploy()</code> on stablecoin delegates (triggers minting/transfer), call <code>checkRWAIn/Out()</code> on RWA delegates (enforces volume limits)</p>
+        <p class="cant-do">❌ Cannot: anything else. No admin powers, no settings changes, no pausing, no self-upgrades.</p>
+        <p style="margin-top:0.4rem; font-size:0.78rem; color:#aaa;">Without this role, anyone could call <code>deploy()</code> directly and potentially mint stablecoins bypassing price checks, whitelist verification, and fee calculation. This role prevents that.</p>
+      </div>
+
+      <h2>How Roles Interact During a Swap</h2>
+      <div class="highlight-box">
+        <p><strong>One-time setup (not per-swap):</strong> Operator registered both assets. Stablecoin Issuer Admin configured discount rates and whitelisted the asset. RWA Issuer Admin set volume limits.</p>
+        <p style="margin-top:0.4rem;"><strong>During the actual swap:</strong> Only the Swap Contract Role is active — validates user, checks price, calls RWA delegate for volume check, calls SC delegate for token transfer, collects fee, emits event. Administrator and Pause Role are not involved in normal swaps at all.</p>
+      </div>
+
+      <h2>Three-Level Pause System</h2>
+      <div class="role-card red">
+        <p><span class="badge badge-red">Level 1: Global</span> <strong>Pause Role</strong> halts entire protocol. All swaps stop across all assets/stablecoins. Nuclear option for protocol-wide emergencies.</p>
+      </div>
+      <div class="role-card amber">
+        <p><span class="badge badge-amber">Level 2: Stablecoin</span> <strong>SC Issuer Admin</strong> pauses their delegate. Only their stablecoin affected. Others continue. Used for issuer-specific reserve or system issues.</p>
+      </div>
+      <div class="role-card green">
+        <p><span class="badge badge-green">Level 3: RWA</span> <strong>RWA Issuer Admin</strong> pauses their delegate. Only their tokenized asset affected. Used for pricing issues or corporate actions.</p>
+      </div>
+      <p>These levels are completely independent. An issuer pausing their delegate does not affect the protocol, and the protocol team pausing does not prevent issuers from managing their own delegates.</p>
+
+      <h2>Key Security Principles</h2>
+      <p><strong>Separation of powers:</strong> No single role can do everything. Compromise of any single role does not give an attacker full control.</p>
+      <p><strong>Multi-signature requirements:</strong> Administrator and Operator must be multi-sig wallets. Multiple authorized team members must approve any action.</p>
+      <p><strong>Issuer sovereignty:</strong> Financial institutions retain full control over their risk parameters, fees, and whitelists. They do not cede any authority to Multiliquid by joining.</p>
+      <p><strong>Full transparency:</strong> Every role grant, parameter change, swap, and fee is recorded on the blockchain and independently verifiable.</p>
+    </div>
+  </div>
+
+<div class="footer">Valinor Partnership Review &middot; Confidential</div>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>

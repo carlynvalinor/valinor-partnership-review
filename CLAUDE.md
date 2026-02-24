@@ -41,6 +41,21 @@ Always ask clarifying questions if the input is ambiguous or incomplete.
 
 ---
 
+## Final Products (Knowledge Base)
+
+The `/final-products/` directory contains completed, approved partnership reviews. **Always check this folder before starting a new review** because:
+
+1. **Comps & context**: Entities already reviewed may be relevant competitors, partners, or infrastructure dependencies for the new entity. Reference them in the Comps tab.
+2. **Consistency**: Match the depth, tone, and structure of existing reviews. These are the quality bar.
+3. **Cross-references**: If the new entity interacts with a previously reviewed entity (e.g., uses Bridge for settlement, or integrates with Multiliquid), note the connection and reference the existing review.
+4. **Design system alignment**: These are the canonical examples of the Valinor research HTML format. When in doubt about component usage, styling, or tab structure, refer to these files.
+
+Current final products:
+- `Bridge_Stripe_PartnershipReview.html` — Stablecoin infrastructure / payments (Bridge/Stripe)
+- `Multiliquid_PartnershipReview.html` — RWA-stablecoin swap protocol (Multiliquid/Uniform Labs)
+
+---
+
 ## Output Format
 
 **Always produce a single `.html` file** saved to the `/output/` directory.
@@ -76,25 +91,63 @@ Use these CSS classes throughout (all defined inline in the HTML `<style>` block
 
 | Component | Class | Use For |
 |-----------|-------|---------|
-| Flow diagram container | `.flow` | Architecture, money movement, process flows |
-| Flow nodes | `.node-blue`, `.node-purple`, `.node-green`, `.node-amber`, `.node-red` | Boxes in flow diagrams |
-| Connection arrows | `.conn` | Arrows between flow nodes |
+| **Layout** | | |
+| Tabs container | `.tabs` | Flex row of tab buttons |
+| Tab button | `.tab` | Pill-shaped tab buttons with border-radius: 8px |
+| Tab section | `.section` | Card-wrapped content panel (bg: `#111118`, border, rounded) |
+| **Flow Diagrams** | | |
+| Flow container | `.flow` | Vertical flex container with dark bg (`#0d0d14`) |
+| Flow row | `.flow-row` | Horizontal row of nodes within vertical flow |
+| Flow nodes | `.node-blue`, `.node-purple`, `.node-green`, `.node-amber`, `.node-red`, `.node-cyan`, `.node-indigo`, `.node-gray` | Colored boxes in flow diagrams |
+| Connector | `.conn` | Flex column container for line + arrow |
+| Connector line | `.conn-line` | 2px vertical colored line between nodes |
+| Connector arrow | `.conn-arrow-down` | CSS triangle pointing down |
+| Text arrow | `.arrow` / `.arrow-label` | Text-based arrow with italic label |
+| Group box | `.group-box` / `.group-label` | Dashed-border grouping box with uppercase label |
+| **Data Display** | | |
 | Info grid | `.info-grid` | Grid layout for info cards |
 | Info card | `.info-card` | Structured data panels (fees, endpoints, etc.) |
-| Role card | `.role-card` | Access control / role descriptions with colored left border |
-| Can/Can't lines | `✅` / `❌` in role cards | Permissions per role |
+| Code block | `.code-block` | Contract addresses, API examples, technical details |
+| Fee table | `.fee-table` | Tabular fee schedules |
+| **Sequence Tables** | | |
+| Sequence wrapper | `.seq` | Dark bg container for sequence tables |
 | Sequence table | `.seq-table` | Step-by-step process tables |
-| Security layers | `.sec-layers` | Numbered defense/security stack |
+| Sequence step | `.seq-step` | Colored pill for step actions |
+| Atomic box | `.seq-atomic` | Nested table for atomic transaction steps |
+| Sequence message | `.seq-msg` | Gray descriptive text in sequences |
+| **Roles & Permissions** | | |
+| Role card | `.role-card` + color (`.blue`, `.purple`, `.amber`, `.green`, `.red`, `.indigo`) | Access control / role descriptions with colored left border |
+| Can/Can't lines | `.can-do` / `.cant-do` | Green ✅ and red ❌ permission lines |
+| Permission layout | `.perm-container` / `.perm-column` / `.perm-divider` | Two-column permission hierarchy |
+| Permission node | `.perm-node` + node color class | Individual role box in permission hierarchy |
+| Restriction text | `.perm-node .restrict` | Red text for "cannot do" items |
+| **Security** | | |
+| Security layers | `.sec-layers` / `.sec-layer` | Numbered defense/security stack |
+| Layer number | `.sec-num` | Numbered circle for each layer |
+| Layer content | `.sec-content` | Title + description for each layer |
+| **Status & Alerts** | | |
 | Badge pills | `.badge-green`, `.badge-amber`, `.badge-red`, `.badge-blue` | Status indicators |
 | Highlight box | `.highlight-box` | Key takeaways, executive summary callouts |
-| Callout boxes | `.callout-amber`, `.callout-red` | Warnings, risks, information gaps |
-| Prose sections | `.prose` | Long-form analysis text |
-| Code blocks | `.code-block` | Contract addresses, API examples, technical details |
-| Tabs | `.tabs` / `.tab-btn` / `.section` | Tabbed navigation |
+| Callout boxes | `.callout-amber`, `.callout-red`, `.callout-blue` | Warnings, risks, information gaps |
+| Callout text | `.callout-title` / `.callout-text` | Styled title and body within callouts |
+| **Prose** | | |
+| Prose sections | `.prose` | Long-form analysis text (max-width: 900px) |
+| Fee list | `.prose .fee-list` | Grid layout for volume/rate fee display |
 | Comparison table | Use `.seq-table` + `.badge-*` | Competitive comparison grids |
+| **Page Structure** | | |
+| Footer | `.footer` | Centered confidential notice at bottom |
+| Meta line | `.meta` | Prepared-by line below subtitle |
+
+#### Title Format
+Every review uses this title structure:
+```html
+<h1>[Entity Name]</h1>
+<p class="subtitle">Partnership Review &mdash; [Entity Type Description]</p>
+<div class="meta">Prepared by Valinor Credit Team &middot; [Date] &middot; v[N]</div>
+```
 
 #### Tab Navigation
-Use JavaScript `showTab()` function for tab switching. Each tab is a `.section` div with an `id`.
+Use JavaScript `showTab()` function for tab switching. Each `.tab` button calls `showTab('sectionId')`. Each tab panel is a `.section` div with an `id` and card-style wrapping (background, border, border-radius).
 
 ---
 
@@ -140,6 +193,7 @@ Include all tabs that are relevant. Skip those that aren't applicable. Add custo
 - Note any gaps or pending items
 
 ### 7. Comps & Competitors
+- **First check `/final-products/` for any previously reviewed entities that are relevant comps** — reference them directly
 - Comparison table (`.seq-table` with `.badge-*` status pills) across key dimensions
 - Then prose analysis of competitive moat and positioning
 - Use `.role-card` blocks for detailed competitor profiles if helpful
@@ -180,12 +234,13 @@ The base HTML template is in `/templates/partnership-review-template.html`. Use 
 
 ## Workflow
 
-1. **Receive input** about an entity (files, links, verbal description)
-2. **Research** — Use available tools (web search, blockchain explorers, document reading) to gather comprehensive information
-3. **Draft** the HTML document using the template
-4. **Flag gaps** — Explicitly mark anything you couldn't verify or find
-5. **Save** to `/output/[EntityName]_PartnershipReview_YYYYMMDD.html`
-6. **Summarize** — Provide a brief text summary of key findings and open questions to the user
+1. **Check final-products/** — Read existing reviews in `/final-products/` to identify relevant comps, cross-references, or design patterns
+2. **Receive input** about an entity (files, links, verbal description)
+3. **Research** — Use available tools (web search, blockchain explorers, document reading) to gather comprehensive information
+4. **Draft** the HTML document using the template
+5. **Flag gaps** — Explicitly mark anything you couldn't verify or find
+6. **Save** to `/output/[EntityName]_PartnershipReview_YYYYMMDD.html`
+7. **Summarize** — Provide a brief text summary of key findings and open questions to the user
 
 ---
 

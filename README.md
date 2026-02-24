@@ -29,6 +29,7 @@ Each document includes tabbed navigation, visual flow diagrams, info cards, role
 ## Directory Structure
 
 ```
+/final-products/          - Approved reviews (agent reads these for comps & context)
 /output/                  - Generated review documents (HTML)
 /templates/               - Base HTML template (do not modify)
 /examples/                - Example completed reviews for reference
