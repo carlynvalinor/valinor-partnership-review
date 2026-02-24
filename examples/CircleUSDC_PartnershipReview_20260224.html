@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circle (USDC) — Valinor Partnership Review</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0a0a0f;
+    color: #e0e0e0;
+    line-height: 1.7;
+    padding: 0;
+    min-height: 100vh;
+  }
+  :root {
+    --accent: #00d4ff;
+    --accent-dim: rgba(0, 212, 255, 0.15);
+    --accent-border: rgba(0, 212, 255, 0.3);
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface-2: #1a1a28;
+    --border: #1e1e2e;
+    --border-light: #2a2a3a;
+    --text: #e0e0e0;
+    --text-secondary: #888;
+    --text-dim: #666;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #f43f5e;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+    --teal: #14b8a6;
+  }
+  .title-bar {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+    border-bottom: 2px solid var(--accent-border);
+    padding: 40px 48px 32px;
+  }
+  .title-bar h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--accent), #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .title-bar .subtitle { color: var(--text-secondary); font-size: 1rem; }
+  .title-bar .meta { margin-top: 12px; font-size: 0.85rem; color: var(--text-dim); }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px 60px; }
+  .tabs {
+    display: flex; gap: 0; border-bottom: 1px solid var(--border);
+    margin: 24px 0 0; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .tab-btn {
+    background: none; border: none; color: var(--text-secondary);
+    padding: 12px 20px; cursor: pointer; font-size: 0.9rem; font-weight: 500;
+    border-bottom: 2px solid transparent; white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .section { display: none; padding: 32px 0; }
+  .section.active { display: block; }
+  h2 { font-size: 1.5rem; color: var(--accent); margin-bottom: 4px; font-weight: 700; }
+  h3 { font-size: 1.15rem; color: var(--text); margin: 28px 0 12px; font-weight: 600; }
+  h4 { font-size: 1rem; color: var(--text-secondary); margin: 20px 0 8px; font-weight: 600; }
+  .desc { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 24px; }
+  p { margin-bottom: 16px; }
+  .prose { max-width: 800px; line-height: 1.8; color: var(--text); margin-bottom: 24px; }
+  .prose strong { color: #fff; }
+  .prose a { color: var(--accent); text-decoration: none; }
+  .prose a:hover { text-decoration: underline; }
+  .highlight-box {
+    background: var(--accent-dim); border: 1px solid var(--accent-border);
+    border-left: 4px solid var(--accent); border-radius: 8px;
+    padding: 20px 24px; margin-bottom: 28px; font-size: 1.05rem; line-height: 1.6;
+  }
+  .callout-amber {
+    background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25);
+    border-left: 4px solid var(--amber); border-radius: 8px;
+    padding: 16px 20px; margin-bottom: 20px; color: #fbbf24; font-size: 0.95rem;
+  }
+  .callout-red {
+    background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.25);
+    border-left: 4px solid var(--red); border-radius: 8px;
+    padding: 16px 20px; margin-bottom: 20px; color: #fb7185; font-size: 0.95rem;
+  }
+  .callout-green {
+    background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25);
+    border-left: 4px solid var(--green); border-radius: 8px;
+    padding: 16px 20px; margin-bottom: 20px; color: #6ee7b7; font-size: 0.95rem;
+  }
+  .info-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px; margin-bottom: 28px;
+  }
+  .info-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+  }
+  .info-card .label {
+    font-size: 0.8rem; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+  }
+  .info-card .value { font-size: 1.1rem; color: #fff; font-weight: 600; }
+  .info-card .detail { font-size: 0.85rem; color: var(--text-secondary); margin-top: 6px; }
+  .role-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 24px; margin-bottom: 16px;
+    border-left: 4px solid var(--accent);
+  }
+  .role-card.role-green { border-left-color: var(--green); }
+  .role-card.role-amber { border-left-color: var(--amber); }
+  .role-card.role-red { border-left-color: var(--red); }
+  .role-card.role-blue { border-left-color: var(--blue); }
+  .role-card.role-purple { border-left-color: var(--purple); }
+  .role-card h4 { margin: 0 0 12px; color: #fff; font-size: 1.05rem; }
+  .role-card .perm { font-size: 0.9rem; line-height: 1.8; color: var(--text-secondary); }
+  .flow {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+    margin: 20px 0 28px; padding: 24px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 12px; overflow-x: auto;
+  }
+  .flow.flow-vertical { flex-direction: column; align-items: stretch; }
+  .flow-group {
+    display: flex; flex-direction: column; gap: 8px; padding: 16px;
+    border: 1px dashed var(--border-light); border-radius: 8px; min-width: 160px;
+  }
+  .flow-group-label {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-dim); margin-bottom: 4px;
+  }
+  .node {
+    padding: 10px 18px; border-radius: 8px; font-size: 0.88rem;
+    font-weight: 500; text-align: center; min-width: 120px;
+  }
+  .node-blue { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #93c5fd; }
+  .node-purple { background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.35); color: #c4b5fd; }
+  .node-green { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #6ee7b7; }
+  .node-amber { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); color: #fcd34d; }
+  .node-red { background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.35); color: #fda4af; }
+  .node-teal { background: rgba(20, 184, 166, 0.15); border: 1px solid rgba(20, 184, 166, 0.35); color: #5eead4; }
+  .node-accent { background: var(--accent-dim); border: 1px solid var(--accent-border); color: var(--accent); }
+  .conn { color: var(--text-dim); font-size: 1.2rem; font-weight: 300; padding: 0 4px; }
+  .seq-table { width: 100%; border-collapse: collapse; margin: 16px 0 28px; font-size: 0.9rem; }
+  .seq-table th {
+    background: var(--surface-2); color: var(--text-secondary); font-weight: 600;
+    text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.04em;
+    padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .seq-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .seq-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .seq-table .step-num { color: var(--accent); font-weight: 700; font-size: 0.95rem; }
+  .atomic-box {
+    background: var(--surface); border: 2px dashed var(--accent-border);
+    border-radius: 10px; padding: 20px; margin: 16px 0 24px;
+  }
+  .atomic-box .atomic-label {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--accent); margin-bottom: 12px; font-weight: 600;
+  }
+  .sec-layers { counter-reset: sec-counter; margin: 16px 0 28px; }
+  .sec-layer {
+    counter-increment: sec-counter; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 20px 16px 60px; margin-bottom: 12px; position: relative;
+  }
+  .sec-layer::before {
+    content: counter(sec-counter); position: absolute; left: 20px; top: 16px;
+    width: 28px; height: 28px; background: var(--accent-dim);
+    border: 1px solid var(--accent-border); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem; color: var(--accent);
+  }
+  .sec-layer h4 { margin: 0 0 4px; color: #fff; font-size: 0.95rem; }
+  .sec-layer p { margin: 0; font-size: 0.88rem; color: var(--text-secondary); }
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.03em;
+  }
+  .badge-green { background: rgba(16, 185, 129, 0.15); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); }
+  .badge-amber { background: rgba(245, 158, 11, 0.15); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+  .badge-red { background: rgba(244, 63, 94, 0.15); color: var(--red); border: 1px solid rgba(244, 63, 94, 0.3); }
+  .badge-blue { background: rgba(59, 130, 246, 0.15); color: var(--blue); border: 1px solid rgba(59, 130, 246, 0.3); }
+  .badge-purple { background: rgba(139, 92, 246, 0.15); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.3); }
+  .code-block {
+    background: #0d0d14; border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px 20px; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.85rem; color: #a8b2d1; overflow-x: auto;
+    margin: 12px 0 20px; line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+  }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  ul, ol { margin: 0 0 16px 20px; color: var(--text-secondary); }
+  li { margin-bottom: 6px; }
+  li strong { color: var(--text); }
+  .footer {
+    text-align: center; padding: 40px 0 20px; color: var(--text-dim);
+    font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 40px;
+  }
+  @media (max-width: 768px) {
+    .title-bar { padding: 24px; }
+    .title-bar h1 { font-size: 1.5rem; }
+    .container { padding: 0 16px 40px; }
+    .info-grid { grid-template-columns: 1fr; }
+    .flow { flex-direction: column; padding: 16px; }
+    .tab-btn { padding: 10px 14px; font-size: 0.82rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="title-bar">
+  <h1>Circle — USDC</h1>
+  <div class="subtitle">Partnership Review — Stablecoin Infrastructure &amp; Settlement Rails</div>
+  <div class="meta">Prepared by Valinor Credit Team · February 24, 2026 · v1</div>
+</div>
+
+<div class="container">
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
+  <button class="tab-btn" onclick="showTab('architecture')">Tech Stack</button>
+  <button class="tab-btn" onclick="showTab('coreflow')">Core Flow</button>
+  <button class="tab-btn" onclick="showTab('money')">Money Movement</button>
+  <button class="tab-btn" onclick="showTab('roles')">Roles &amp; Access</button>
+  <button class="tab-btn" onclick="showTab('security')">Security</button>
+  <button class="tab-btn" onclick="showTab('comps')">Comps</button>
+  <button class="tab-btn" onclick="showTab('risks')">Risks</button>
+</div>
+
+<!-- TAB 1: OVERVIEW -->
+<div id="overview" class="section active">
+  <h2>Overview</h2>
+  <p class="desc">Non-technical explainer — what Circle does and why it matters to Valinor.</p>
+
+  <div class="highlight-box">
+    <strong>Circle is the issuer of USDC, the second-largest stablecoin by market capitalization, providing regulated dollar-denominated settlement infrastructure that is foundational to on-chain credit operations.</strong>
+  </div>
+
+  <h3>Why It Exists</h3>
+  <div class="prose">
+    <p><strong>Problem:</strong> Moving dollars on-chain requires a trusted, regulated bridge between traditional banking and blockchain networks. Without reliable stablecoins, on-chain credit markets cannot denominate loans, settle payments, or manage collateral in dollar terms.</p>
+    <p><strong>Solution:</strong> Circle issues USDC — a fully-reserved, dollar-backed stablecoin — and provides APIs and infrastructure for businesses to mint, redeem, and transfer digital dollars across multiple blockchains. Each USDC token is backed 1:1 by cash and short-duration US Treasuries held at regulated financial institutions.</p>
+  </div>
+
+  <h3>How It Works (High Level)</h3>
+  <div class="prose">
+    <p>Businesses deposit USD into Circle's banking partners and receive an equivalent amount of USDC tokens on their chosen blockchain. These tokens can be transferred instantly, 24/7, to any address on supported chains. When a holder wants dollars back, they redeem USDC through Circle, which burns the tokens and wires USD. Circle makes money on the yield from its reserve assets (primarily short-term Treasuries).</p>
+  </div>
+
+  <h3>Who Uses It</h3>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="label">Primary Users</div>
+      <div class="value">Institutional &amp; Enterprise</div>
+      <div class="detail">Exchanges, DeFi protocols, payment companies, fintechs, treasury managers</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Key Use Case</div>
+      <div class="value">Settlement &amp; Payments</div>
+      <div class="detail">On-chain settlement, cross-border payments, DeFi liquidity, loan disbursement &amp; repayment</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Scale</div>
+      <div class="value">~$45B+ Market Cap</div>
+      <div class="detail">Circulating supply as of early 2026; second only to USDT</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Chain Coverage</div>
+      <div class="value">15+ Chains</div>
+      <div class="detail">Ethereum, Solana, Polygon, Arbitrum, Base, Avalanche, and more</div>
+    </div>
+  </div>
+
+  <h3>Team &amp; Backing</h3>
+  <div class="prose">
+    <p><strong>Founded:</strong> 2013 by Jeremy Allaire (CEO) and Sean Neville. Headquartered in Boston, MA.</p>
+    <p><strong>Public Company:</strong> Circle went public on NYSE (ticker: CRCL) in 2024. This provides financial transparency via SEC filings, quarterly earnings, and audited financials.</p>
+    <p><strong>Key Investors (pre-IPO):</strong> Goldman Sachs, BlackRock, Fidelity, Marshall Wace, IDG Capital, Breyer Capital, Accel, General Catalyst, among others. The BlackRock relationship is particularly notable — BlackRock manages the Circle Reserve Fund (USDXX), a government money market fund holding USDC reserves.</p>
+  </div>
+
+  <h3>Regulatory Status</h3>
+  <div class="prose">
+    <p>Circle is a licensed Money Transmitter in the US (holds state-level licenses and is registered with FinCEN as a Money Services Business). The company has pursued regulatory compliance aggressively, positioning USDC as the "regulated stablecoin." Circle also holds an EMI (Electronic Money Institution) license in the EU under MiCA and has secured a Major Payment Institution license from MAS in Singapore.</p>
+  </div>
+
+  <h3>Valinor Relevance</h3>
+  <div class="highlight-box">
+    <strong>USDC is the most likely settlement token for Valinor's on-chain credit operations.</strong> As Valinor originates and structures credit transactions on-chain, USDC provides the dollar-denominated rails for loan disbursement, interest payments, and principal repayment. Circle's regulated status, reserve transparency, and multi-chain support align with Valinor's institutional-grade requirements. The Circle Mint API enables programmatic minting/redemption, which supports Valinor's vision of automated money movement in credit workflows.
+  </div>
+</div>
+
+<!-- TAB 2: TECH STACK -->
+<div id="architecture" class="section">
+  <h2>Tech Stack &amp; Architecture</h2>
+  <p class="desc">Circle's platform modules, smart contract architecture, and infrastructure.</p>
+
+  <h3>Platform Architecture</h3>
+  <div class="flow">
+    <div class="flow-group">
+      <div class="flow-group-label">Banking Layer</div>
+      <div class="node node-green">Partner Banks</div>
+      <div class="node node-green">BlackRock USDXX Fund</div>
+    </div>
+    <span class="conn">→</span>
+    <div class="flow-group">
+      <div class="flow-group-label">Circle Core</div>
+      <div class="node node-blue">Circle Mint</div>
+      <div class="node node-blue">Reserve Management</div>
+      <div class="node node-blue">Compliance Engine</div>
+    </div>
+    <span class="conn">→</span>
+    <div class="flow-group">
+      <div class="flow-group-label">On-Chain</div>
+      <div class="node node-purple">USDC Smart Contracts</div>
+      <div class="node node-purple">CCTP (Cross-Chain)</div>
+    </div>
+    <span class="conn">→</span>
+    <div class="flow-group">
+      <div class="flow-group-label">Developer APIs</div>
+      <div class="node node-teal">Programmable Wallets</div>
+      <div class="node node-teal">Smart Contract Platform</div>
+    </div>
+  </div>
+
+  <h3>Key Products</h3>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="label">Circle Mint</div>
+      <div class="value">Mint / Redeem API</div>
+      <div class="detail">Enterprise API for converting USD ↔ USDC. Requires approved Circle Mint account with KYB/KYC.</div>
+    </div>
+    <div class="info-card">
+      <div class="label">CCTP</div>
+      <div class="value">Cross-Chain Transfer Protocol</div>
+      <div class="detail">Native burn-and-mint bridging for USDC across chains. No wrapped tokens — native USDC on each chain.</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Programmable Wallets</div>
+      <div class="value">MPC Wallet Infrastructure</div>
+      <div class="detail">API-driven wallet creation and management for applications embedding USDC payments.</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Smart Contract Platform</div>
+      <div class="value">Gas Abstraction &amp; Paymaster</div>
+      <div class="detail">Allows gasless USDC transactions for end users. Circle sponsors gas fees.</div>
+    </div>
+  </div>
+
+  <h3>USDC Contract Architecture</h3>
+  <div class="prose">
+    <p>USDC uses an <strong>upgradeable proxy pattern</strong> (EIP-1967). The token contract is a proxy that delegates to an implementation contract. This allows Circle to upgrade the token logic without changing the contract address. The current implementation is FiatTokenV2_2.</p>
+  </div>
+  <div class="code-block">Ethereum USDC: 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+Polygon USDC:  0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359
+Arbitrum USDC: 0xaf88d065e77c8cC2239327C5EDb3A432268e5831
+Base USDC:     0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+Solana USDC:   EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v</div>
+</div>
+
+<!-- TAB 3: CORE FLOW -->
+<div id="coreflow" class="section">
+  <h2>Core Flow</h2>
+  <p class="desc">Step-by-step sequence for minting and redeeming USDC via Circle Mint.</p>
+
+  <h3>Mint Flow (USD → USDC)</h3>
+  <table class="seq-table">
+    <thead>
+      <tr><th>Step</th><th>Action</th><th>Actor</th><th>Details</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="step-num">1</span></td>
+        <td>Initiate mint request</td>
+        <td>Valinor (via API)</td>
+        <td>POST to Circle Mint API specifying amount, destination chain, and wallet address</td>
+      </tr>
+      <tr>
+        <td><span class="step-num">2</span></td>
+        <td>Wire USD to Circle</td>
+        <td>Valinor Treasury</td>
+        <td>Bank wire from Valinor's banking partner to Circle's custodial bank account</td>
+      </tr>
+      <tr>
+        <td><span class="step-num">3</span></td>
+        <td>Circle confirms receipt</td>
+        <td>Circle</td>
+        <td>Typically same-day for domestic wires; can take 1-2 business days</td>
+      </tr>
+      <tr>
+        <td><span class="step-num">4</span></td>
+        <td>USDC minted on-chain</td>
+        <td>Circle (Minter role)</td>
+        <td>Circle's authorized minter calls mint() on the USDC contract, creating tokens to specified address</td>
+      </tr>
+      <tr>
+        <td><span class="step-num">5</span></td>
+        <td>USDC arrives in wallet</td>
+        <td>On-chain</td>
+        <td>Tokens appear in Valinor's designated wallet; confirmed in 1-2 blocks depending on chain</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Redeem Flow (USDC → USD)</h3>
+  <table class="seq-table">
+    <thead>
+      <tr><th>Step</th><th>Action</th><th>Actor</th><th>Details</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="step-num">1</span></td>
+        <td>Initiate redemption</td>
+        <td>Valinor (via API)</td>
+        <td>POST to Circle Mint API requesting burn of USDC for USD</td>
+      </tr>
+      <tr>
+        <td><span class="step-num">2</span></td>
+        <td>Transfer USDC to Circle</td>
+        <td>Valinor</td>
+        <td>Send USDC to Circle's designated burn address on the relevant chain</td>
+      </tr>
+      <tr>
+        <td><span class="step-num">3</span></td>
+        <td>USDC burned</td>
+        <td>Circle</td>
+        <td>Tokens are burned (supply decreases), removing them from circulation</td>
+      </tr>
+      <tr>
+        <td><span class="step-num">4</span></td>
+        <td>USD wired</td>
+        <td>Circle</td>
+        <td>USD wired to Valinor's bank account. Standard 1-2 business day settlement for USD wires.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Cross-Chain Transfer (CCTP)</h3>
+  <div class="atomic-box">
+    <div class="atomic-label">⚡ Burn-and-Mint — Two Transactions</div>
+    <p><strong>Source chain:</strong> User calls depositForBurn() on CCTP MessageTransmitter, burning USDC and emitting an attestation message.</p>
+    <p style="margin-top: 8px;"><strong>Destination chain:</strong> After Circle's attestation service signs the message (~1-2 minutes), a relayer calls receiveMessage() on the destination MessageTransmitter, which triggers minting of native USDC to the recipient.</p>
+    <p style="margin-top: 8px; color: var(--text-dim);"><em>No wrapped tokens. The USDC on the destination chain is native, not bridged.</em></p>
+  </div>
+</div>
+
+<!-- TAB 4: MONEY MOVEMENT -->
+<div id="money" class="section">
+  <h2>Money Movement</h2>
+  <p class="desc">How dollars flow from fiat through USDC and back — the critical settlement path.</p>
+
+  <h3>End-to-End Flow</h3>
+  <div class="flow">
+    <div class="node node-green">Valinor Bank Account</div>
+    <span class="conn">→</span>
+    <div class="node node-blue">Circle Custodial Bank (BNY Mellon)</div>
+    <span class="conn">→</span>
+    <div class="node node-accent">Circle Mint Engine</div>
+    <span class="conn">→</span>
+    <div class="node node-purple">USDC On-Chain</div>
+    <span class="conn">→</span>
+    <div class="node node-amber">Borrower / Protocol</div>
+  </div>
+
+  <h3>Reserve Composition</h3>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="label">Reserve Fund</div>
+      <div class="value">BlackRock USDXX</div>
+      <div class="detail">Circle Reserve Fund — a government money market fund invested in short-dated US Treasuries and overnight repo</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Cash Portion</div>
+      <div class="value">Partner Banks</div>
+      <div class="detail">Cash held at regulated US banking institutions for liquidity and same-day redemption</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Attestation</div>
+      <div class="value">Monthly by Deloitte</div>
+      <div class="detail">Independent accountant's report on reserve composition published monthly</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Revenue Model</div>
+      <div class="value">Reserve Yield</div>
+      <div class="detail">Circle earns interest on reserves (Treasuries). ~$1.6B+ revenue in 2024 from reserve income.</div>
+    </div>
+  </div>
+
+  <div class="callout-green">
+    ✅ <strong>Transparency:</strong> USDC reserves are attested monthly by Deloitte. As a public company (NYSE: CRCL), Circle files quarterly 10-Q and annual 10-K with detailed financials. Reserve composition is broken down in SEC filings.
+  </div>
+
+  <h3>Settlement Characteristics</h3>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="label">Mint Time (USD → USDC)</div>
+      <div class="value">Same Day to T+1</div>
+      <div class="detail">Depends on wire speed and Circle processing</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Redeem Time (USDC → USD)</div>
+      <div class="value">T+1 to T+2</div>
+      <div class="detail">Standard banking wire settlement applies</div>
+    </div>
+    <div class="info-card">
+      <div class="label">On-Chain Transfer</div>
+      <div class="value">Seconds to Minutes</div>
+      <div class="detail">Block time dependent: ~12s Ethereum, ~400ms Solana, ~2s Arbitrum</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Cross-Chain (CCTP)</div>
+      <div class="value">~1-2 Minutes</div>
+      <div class="detail">Attestation delay for security; no slippage or bridging risk</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: ROLES & ACCESS -->
+<div id="roles" class="section">
+  <h2>Roles &amp; Access Control</h2>
+  <p class="desc">Smart contract roles, admin capabilities, and centralization considerations for USDC.</p>
+
+  <div class="callout-amber">
+    ⚠️ <strong>Important Context:</strong> USDC is a centrally-issued stablecoin. Circle retains significant control over the token contract, which is a feature (regulatory compliance, law enforcement cooperation) and a risk (single point of control). This is inherent to the regulated stablecoin model.
+  </div>
+
+  <div class="role-card role-red">
+    <h4>🔑 Admin / Owner (Circle)</h4>
+    <div class="perm">
+      ✅ Can upgrade the USDC implementation contract (proxy upgrade)<br>
+      ✅ Can pause all USDC transfers globally<br>
+      ✅ Can blacklist specific addresses (freeze funds)<br>
+      ✅ Can configure authorized minters and their allowances<br>
+      ✅ Can change the master minter, pauser, and blacklister roles<br>
+      ❌ Cannot mint without updating minter allowance first<br>
+      ❌ Cannot access funds in user wallets (only freeze in place)
+    </div>
+  </div>
+
+  <div class="role-card role-blue">
+    <h4>🏭 Master Minter (Circle)</h4>
+    <div class="perm">
+      ✅ Can configure minter addresses<br>
+      ✅ Can set per-minter allowances (how much each minter can create)<br>
+      ❌ Cannot directly mint tokens<br>
+      ❌ Cannot blacklist or pause
+    </div>
+  </div>
+
+  <div class="role-card role-green">
+    <h4>💰 Minter (Circle Operations)</h4>
+    <div class="perm">
+      ✅ Can mint USDC up to their approved allowance<br>
+      ✅ Can burn USDC they hold<br>
+      ❌ Cannot exceed their allowance<br>
+      ❌ Cannot modify other roles<br>
+      ❌ Cannot pause or blacklist
+    </div>
+  </div>
+
+  <div class="role-card role-amber">
+    <h4>⏸️ Pauser (Circle Compliance)</h4>
+    <div class="perm">
+      ✅ Can pause all USDC transfers on the contract<br>
+      ✅ Can unpause transfers<br>
+      ❌ Cannot mint, burn, or blacklist<br>
+      ❌ Cannot modify any other roles
+    </div>
+  </div>
+
+  <div class="role-card role-purple">
+    <h4>🚫 Blacklister (Circle Compliance / Law Enforcement)</h4>
+    <div class="perm">
+      ✅ Can add addresses to the blacklist (frozen in place)<br>
+      ✅ Can remove addresses from the blacklist<br>
+      ❌ Cannot seize or move frozen funds<br>
+      ❌ Cannot mint, burn, pause, or modify other roles
+    </div>
+  </div>
+</div>
+
+<!-- TAB 6: SECURITY -->
+<div id="security" class="section">
+  <h2>Security &amp; Compliance</h2>
+  <p class="desc">Regulatory posture, audit status, custody model, and defense stack.</p>
+
+  <div class="sec-layers">
+    <div class="sec-layer">
+      <h4>Regulatory Licensing</h4>
+      <p>US: State money transmitter licenses (48 states + DC + PR), FinCEN MSB. EU: EMI license under MiCA (France). Singapore: Major Payment Institution (MAS). Circle is a publicly traded company (NYSE: CRCL) subject to SEC disclosure requirements.</p>
+    </div>
+    <div class="sec-layer">
+      <h4>KYC / AML</h4>
+      <p>All Circle Mint customers undergo KYB/KYC. Sanctions screening (OFAC, EU, UN lists). Transaction monitoring for suspicious activity. Circle has cooperated with US law enforcement on address blacklisting (e.g., Tornado Cash sanctions in 2022).</p>
+    </div>
+    <div class="sec-layer">
+      <h4>Smart Contract Security</h4>
+      <p>USDC contracts have been audited by Trail of Bits and other firms. The FiatToken implementation has been live since 2018 with multiple upgrades. Open-source and heavily reviewed by the security community. Bug bounty program active.</p>
+    </div>
+    <div class="sec-layer">
+      <h4>Reserve Custody</h4>
+      <p>Reserves held at BNY Mellon (custodian) and other regulated US banking partners. The Circle Reserve Fund (USDXX) is managed by BlackRock and registered with the SEC as a government money market fund (2a-7).</p>
+    </div>
+    <div class="sec-layer">
+      <h4>Attestation &amp; Audit</h4>
+      <p>Monthly reserve attestation by Deloitte (independent accountant). As a public company, annual audit by Big 4 firm. SEC quarterly and annual filings provide detailed financial transparency.</p>
+    </div>
+    <div class="sec-layer">
+      <h4>Operational Security</h4>
+      <p>Admin keys for USDC contract managed via multi-signature wallets. Specific multisig configuration and key management details are not fully public (see Risk Factors).</p>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 7: COMPS -->
+<div id="comps" class="section">
+  <h2>Comps &amp; Competitors</h2>
+  <p class="desc">How USDC compares to other stablecoins and settlement options.</p>
+
+  <table class="seq-table">
+    <thead>
+      <tr>
+        <th>Dimension</th>
+        <th>USDC (Circle)</th>
+        <th>USDT (Tether)</th>
+        <th>PYUSD (PayPal)</th>
+        <th>DAI (MakerDAO)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Issuer Type</strong></td>
+        <td>Public company (NYSE)</td>
+        <td>Private (BVI)</td>
+        <td>Public company (NASDAQ)</td>
+        <td>Decentralized protocol</td>
+      </tr>
+      <tr>
+        <td><strong>Market Cap</strong></td>
+        <td><span class="badge badge-green">~$45B+</span></td>
+        <td><span class="badge badge-green">~$140B+</span></td>
+        <td><span class="badge badge-amber">~$1B</span></td>
+        <td><span class="badge badge-blue">~$5B</span></td>
+      </tr>
+      <tr>
+        <td><strong>Reserve Transparency</strong></td>
+        <td><span class="badge badge-green">Monthly attestation + SEC filings</span></td>
+        <td><span class="badge badge-amber">Quarterly attestation</span></td>
+        <td><span class="badge badge-green">Monthly attestation + SEC filings</span></td>
+        <td><span class="badge badge-green">On-chain (real-time)</span></td>
+      </tr>
+      <tr>
+        <td><strong>US Regulation</strong></td>
+        <td><span class="badge badge-green">Licensed MSB + MTLs</span></td>
+        <td><span class="badge badge-red">No US license</span></td>
+        <td><span class="badge badge-green">Licensed via PayPal</span></td>
+        <td><span class="badge badge-amber">Unregulated</span></td>
+      </tr>
+      <tr>
+        <td><strong>Chain Support</strong></td>
+        <td>15+ chains</td>
+        <td>15+ chains</td>
+        <td>Ethereum, Solana</td>
+        <td>Ethereum + bridges</td>
+      </tr>
+      <tr>
+        <td><strong>Centralized Control</strong></td>
+        <td><span class="badge badge-amber">Yes — can freeze/blacklist</span></td>
+        <td><span class="badge badge-amber">Yes — can freeze</span></td>
+        <td><span class="badge badge-amber">Yes — can freeze</span></td>
+        <td><span class="badge badge-green">No — decentralized</span></td>
+      </tr>
+      <tr>
+        <td><strong>Enterprise API</strong></td>
+        <td><span class="badge badge-green">Full suite</span></td>
+        <td><span class="badge badge-red">Limited</span></td>
+        <td><span class="badge badge-amber">PayPal ecosystem</span></td>
+        <td><span class="badge badge-amber">DeFi-native only</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Competitive Moat</h3>
+  <div class="prose">
+    <p><strong>Regulatory positioning</strong> is Circle's primary moat. As stablecoin regulation tightens globally (MiCA in EU, potential US stablecoin legislation), USDC's compliance-first posture becomes an increasingly important differentiator for institutional users. Tether dominates volume but lacks US licensing; PYUSD is well-regulated but limited in DeFi adoption; DAI is transparent but lacks regulatory clarity.</p>
+    <p><strong>For Valinor's use case</strong> (institutional credit operations), USDC is the strongest fit due to: (1) regulatory clarity for institutional counterparties, (2) the most robust enterprise API suite, (3) native cross-chain support via CCTP, and (4) BlackRock-managed reserves providing institutional-grade backing.</p>
+  </div>
+</div>
+
+<!-- TAB 8: RISKS -->
+<div id="risks" class="section">
+  <h2>Risk Factors &amp; Open Questions</h2>
+  <p class="desc">Key risks and recommended diligence questions for the Valinor team.</p>
+
+  <div class="callout-red">
+    🔴 <strong>High — Centralized Freeze/Blacklist Risk:</strong> Circle can unilaterally freeze any USDC address. In a scenario where Valinor or a borrower's address is flagged (erroneously or due to taint from upstream transactions), funds could be frozen without recourse. This has happened to addresses interacting with sanctioned entities. The impact on an active loan portfolio could be severe.
+  </div>
+
+  <div class="callout-amber">
+    🟡 <strong>Medium — Banking Concentration Risk:</strong> USDC's ability to process mints and redemptions depends on Circle's banking relationships. During the Silicon Valley Bank crisis in March 2023, USDC briefly de-pegged to ~$0.87 when Circle disclosed $3.3B in reserves at SVB. While reserves have since diversified (BNY Mellon as primary custodian), banking partner concentration remains a systemic risk.
+  </div>
+
+  <div class="callout-amber">
+    🟡 <strong>Medium — Regulatory Risk:</strong> Future stablecoin legislation could impose new requirements on USDC (e.g., mandatory bank charters, reserve composition rules, or restrictions on DeFi interactions). Circle is well-positioned to adapt, but regulatory changes could affect USDC's utility in certain on-chain credit structures.
+  </div>
+
+  <div class="callout-amber">
+    🟡 <strong>Medium — Upgrade Authority Risk:</strong> Circle can upgrade the USDC proxy contract, potentially changing token behavior. While upgrades have historically been benign (adding features like gasless transfers), the unilateral upgrade capability represents a trust dependency.
+  </div>
+
+  <h3>Risk Summary</h3>
+  <table class="seq-table">
+    <thead>
+      <tr><th>Risk Type</th><th>Severity</th><th>Description</th><th>Mitigation</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Counterparty</td>
+        <td><span class="badge badge-red">High</span></td>
+        <td>Address freeze / blacklist capability</td>
+        <td>Maintain compliance program; diversify stablecoin exposure; monitor address reputation</td>
+      </tr>
+      <tr>
+        <td>Banking</td>
+        <td><span class="badge badge-amber">Medium</span></td>
+        <td>Bank partner failure → de-peg risk</td>
+        <td>Reserves now diversified across BNY Mellon + others; BlackRock fund provides additional stability</td>
+      </tr>
+      <tr>
+        <td>Regulatory</td>
+        <td><span class="badge badge-amber">Medium</span></td>
+        <td>New stablecoin legislation could change rules</td>
+        <td>Circle actively engaged in regulatory process; well-positioned to comply</td>
+      </tr>
+      <tr>
+        <td>Smart Contract</td>
+        <td><span class="badge badge-green">Low</span></td>
+        <td>Contract bug or exploit</td>
+        <td>Extensively audited; live since 2018; mature codebase; bug bounty active</td>
+      </tr>
+      <tr>
+        <td>Operational</td>
+        <td><span class="badge badge-green">Low</span></td>
+        <td>Admin key compromise</td>
+        <td>Multi-sig controls; though specific configuration not fully disclosed</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Open Questions for Diligence</h3>
+  <div class="highlight-box">
+    <strong>Recommended follow-up questions for the Valinor team:</strong>
+    <ol style="margin-top: 12px; color: var(--text);">
+      <li><strong>Blacklist Policy:</strong> What is Circle's internal process for blacklisting? What are the criteria, response time, and appeals process? Has Valinor's anticipated transaction pattern been reviewed for compliance?</li>
+      <li><strong>Circle Mint SLA:</strong> What are the guaranteed mint/redeem times? Is there a contractual SLA for institutional accounts? What are the minimum and maximum transaction sizes?</li>
+      <li><strong>Multisig Details:</strong> What is the specific multisig configuration for USDC admin keys? How many signers, what threshold, and who are the signers?</li>
+      <li><strong>Insurance / Indemnification:</strong> Does Circle provide any indemnification or insurance for erroneous blacklisting? What protections exist for institutional users?</li>
+      <li><strong>DeFi Integration Policy:</strong> How does Circle view USDC usage in DeFi lending protocols? Are there any restrictions on how institutional USDC holders can deploy capital on-chain?</li>
+      <li><strong>Cross-Chain Priority:</strong> Which chains does Circle plan to expand CCTP to next? Are there any plans for native USDC on chains Valinor may operate on?</li>
+      <li><strong>Fee Structure:</strong> What are the fees for Circle Mint (minting/redemption)? Are there volume discounts for institutional users? What are CCTP relay fees?</li>
+    </ol>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  Valinor Partnership Review · Confidential · Prepared February 24, 2026
+</div>
+
+<script>
+function showTab(tabId) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+</script>
+
+</body>
+</html>

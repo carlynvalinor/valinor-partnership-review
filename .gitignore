@@ -1,0 +1,29 @@
+# Output files (generated reviews — may contain confidential info)
+output/*
+!output/.gitkeep
+
+# Raw input files (may contain sensitive data)
+raw-inputs/*
+!raw-inputs/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Claude session data
+.claude/session-env
+.claude/debug/
+.claude/stats-cache.json
+.claude/statsig/
+.claude/telemetry/
+.claude/plans/
+.claude/todos/
+.claude/shell-snapshots/
+.claude/plugins/
