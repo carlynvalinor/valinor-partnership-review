@@ -19,6 +19,40 @@
      Amber:      accent=#f59e0b  light=#fcd34d  bg=#2a1800
      Red/Rose:   accent=#f43f5e  light=#fda4af  bg=#2a0a14
      Teal:       accent=#14b8a6  light=#5eead4  bg=#0a2828
+
+     ENTITY TYPES & TAB SETS (see CLAUDE.md for full details):
+     ─────────────────────────────────────────────────────────
+     1. Protocol / Smart Contract (Purple)
+        Overview → Core Flow → Smart Contract Architecture →
+        Permission Hierarchy → Security Model → Data & Fees →
+        Event System → Comps → News → Risks
+
+     2. Infrastructure Platform (Blue/Cyan)
+        Overview → Platform Architecture → Orchestration Flow →
+        API & Integration → Money Movement → Custody →
+        Security & Compliance → Comps → News → Risks
+
+     3. Asset Issuer / Tokenizer (Amber)
+        Overview → Issuance Architecture → Asset Lifecycle →
+        Underlying Assets → Legal Structure → Redemption →
+        Compliance Framework → Comps → News → Risks
+
+     4. Lending / Credit Protocol (Green)
+        Overview → Lending Architecture → Loan Lifecycle →
+        Credit Assessment → Pool Structure → Money Movement →
+        Default & Recovery → Comps → News → Risks
+
+     5. Stablecoin Issuer (Blue/Cyan)
+        Overview → Issuance & Redemption → Reserve Composition →
+        Attestation → Regulatory Framework → Chain Deployments →
+        Mint/Burn Mechanics → Comps → News → Risks
+
+     6. Wallet / Custody Provider (Teal)
+        Overview → Custody Architecture → Key Management →
+        Policy Engine → Supported Assets → Insurance →
+        Compliance & Licensing → Comps → News → Risks
+
+     All types end with: ... → Comps → News → Risks
      ============================================================ */
 
   /* --- Reset & Base --- */
@@ -159,22 +193,36 @@
   <div class="meta">Prepared by Valinor Credit Team &middot; DATE_LONG &middot; v1</div>
 
   <!-- ============================================================
-       TAB NAVIGATION — Add/remove tabs as needed
+       TAB NAVIGATION
+       Select tabs based on entity type. See CLAUDE.md for the
+       full tab set per type. All types include:
+         - Overview (always first, always active)
+         - [Entity-type-specific middle tabs]
+         - Comps (always third-to-last)
+         - News (always second-to-last)
+         - Risks (always last)
        ============================================================ -->
   <div class="tabs">
     <button class="tab active" onclick="showTab('overview')">Overview</button>
-    <button class="tab" onclick="showTab('architecture')">Tech Stack</button>
-    <button class="tab" onclick="showTab('coreflow')">Core Flow</button>
-    <button class="tab" onclick="showTab('money')">Money Movement</button>
-    <button class="tab" onclick="showTab('roles')">Roles &amp; Access</button>
-    <button class="tab" onclick="showTab('security')">Security</button>
+    <!-- ── ENTITY-TYPE-SPECIFIC TABS GO HERE ──
+         Add 5-7 tabs based on the entity type classification.
+         See CLAUDE.md → Entity Classification & Tab Selection.
+         Example for Infrastructure Platform:
+           <button class="tab" onclick="showTab('architecture')">Platform Architecture</button>
+           <button class="tab" onclick="showTab('orchestration')">Orchestration Flow</button>
+           <button class="tab" onclick="showTab('api')">API &amp; Integration</button>
+           <button class="tab" onclick="showTab('money')">Money Movement</button>
+           <button class="tab" onclick="showTab('custody')">Custody</button>
+           <button class="tab" onclick="showTab('security')">Security &amp; Compliance</button>
+    -->
     <button class="tab" onclick="showTab('comps')">Comps</button>
+    <button class="tab" onclick="showTab('news')">News</button>
     <button class="tab" onclick="showTab('risks')">Risks</button>
   </div>
 
 
   <!-- ============================================================
-       TAB 1: OVERVIEW
+       TAB: OVERVIEW (Universal — Always Tab 1)
        Non-technical explainer accessible to anyone on the team.
        ============================================================ -->
   <div id="overview" class="section active">
@@ -211,178 +259,108 @@
 
 
   <!-- ============================================================
-       TAB 2: TECH STACK / ARCHITECTURE
-       Platform modules, smart contract architecture, chain support.
+       ENTITY-TYPE-SPECIFIC TABS — ADD MIDDLE SECTIONS HERE
+       ────────────────────────────────────────────────────────
+       Insert 5-7 tab sections based on entity classification.
+       Each section follows the same structure:
+
+       <div id="TAB_ID" class="section">
+         <h2>Tab Title</h2>
+         <p class="desc">Brief description of what this tab covers.</p>
+         [Content using design system components]
+       </div>
+
+       COMPONENT REFERENCE (use these inside tab sections):
+
+       ▸ Flow Diagram:
+         <div class="flow">
+           <div class="node node-blue"><b>Title</b>Description</div>
+           <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
+           <div class="flow-row">
+             <div class="node node-green"><b>A</b>Desc</div>
+             <div class="node node-amber"><b>B</b>Desc</div>
+           </div>
+         </div>
+
+       ▸ Group Box (inside .flow):
+         <div class="group-box" style="border-color:#0ea5e955; max-width:600px; width:100%;">
+           <div class="group-label" style="color:#0ea5e9;">Group Name</div>
+           <div class="flow-row">[nodes]</div>
+         </div>
+
+       ▸ Sequence Table:
+         <div class="seq"><table class="seq-table">
+           <thead><tr><th>#</th><th>From</th><th></th><th>To</th><th>Action</th></tr></thead>
+           <tbody>
+             <tr><td>1</td><td>[Actor]</td><td>&rarr;</td><td>[Target]</td>
+             <td style="text-align:left;"><span class="seq-step">action()</span><br>
+             <span class="seq-msg">Description</span></td></tr>
+           </tbody>
+         </table></div>
+
+       ▸ Atomic Box (inside sequence):
+         <div class="seq-atomic">
+           <div style="text-align:center; color:#0ea5e9; font-size:0.72rem; font-weight:600;">
+             ATOMIC — All Steps Succeed or Entire Tx Reverts</div>
+           <table class="seq-table" style="margin:0;">[rows]</table>
+         </div>
+
+       ▸ Info Grid:
+         <div class="info-grid">
+           <div class="info-card"><h3>Title</h3><p>Content</p></div>
+           <div class="info-card"><h3>Title</h3><div class="code-block">0x1234...5678</div></div>
+         </div>
+
+       ▸ Role Cards:
+         <div class="prose">
+           <div class="role-card blue">
+             <h3>Role Name</h3><p>Description</p>
+             <p class="can-do">✓ Can: [capabilities]</p>
+             <p class="cant-do">✗ Cannot: [restrictions]</p>
+           </div>
+         </div>
+
+       ▸ Security Layers:
+         <div class="sec-layers">
+           <div class="sec-layer"><div class="sec-num">1</div>
+             <div class="sec-content"><b>Title</b><br><span>Description</span></div></div>
+         </div>
+
+       ▸ Permission Hierarchy:
+         <div class="perm-container">
+           <div class="perm-column"><h4>Column Title</h4>
+             <div class="perm-node node-blue"><b>Role</b>Description
+               <div class="restrict">Cannot: [restriction]</div></div>
+           </div>
+           <div class="perm-divider"></div>
+           <div class="perm-column"><h4>Column Title</h4>[nodes]</div>
+         </div>
+
+       ▸ Fee Table:
+         <table class="fee-table">
+           <tr><th>Tier</th><th>Rate</th></tr>
+           <tr><td>$0–$1M</td><td>0.10%</td></tr>
+         </table>
+
+       ▸ Callouts:
+         <div class="callout callout-red">
+           <div class="callout-title" style="color:#ef4444;">Title</div>
+           <div class="callout-text">Description</div></div>
+         <div class="callout callout-amber">
+           <div class="callout-title" style="color:#f59e0b;">Title</div>
+           <div class="callout-text">Description</div></div>
+
+       ▸ Badges (inline):
+         <span class="badge badge-green">Active</span>
+         <span class="badge badge-amber">Pending</span>
+         <span class="badge badge-red">High Risk</span>
+         <span class="badge badge-blue">Info</span>
+
        ============================================================ -->
-  <div id="architecture" class="section">
-    <h2>Tech Stack &amp; Architecture</h2>
-    <p class="desc">Platform modules, smart contract architecture, infrastructure dependencies, and chain support.</p>
-
-    <div class="flow">
-      <div class="node node-gray"><b>[Entry Point]</b>User / API caller</div>
-      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
-      <div class="group-box" style="border-color:#0ea5e955; max-width:600px; width:100%;">
-        <div class="group-label" style="color:#0ea5e9;">[Core Module Name]</div>
-        <div class="flow-row">
-          <div class="node node-blue"><b>[Component A]</b>[Description]</div>
-          <div class="arrow">&rarr;</div>
-          <div class="node node-blue"><b>[Component B]</b>[Description]</div>
-          <div class="arrow">&rarr;</div>
-          <div class="node node-blue"><b>[Component C]</b>[Description]</div>
-        </div>
-      </div>
-      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
-      <div class="flow-row" style="gap:2rem;">
-        <div class="node node-green"><b>[External Dep A]</b>[Description]</div>
-        <div class="node node-amber"><b>[External Dep B]</b>[Description]</div>
-      </div>
-    </div>
-
-    <div class="info-grid">
-      <div class="info-card">
-        <h3>Supported Chains</h3>
-        <p>[Chain list with deployment status]</p>
-      </div>
-      <div class="info-card">
-        <h3>Smart Contracts</h3>
-        <p>[Audited / Unaudited] — [Auditor name if applicable]</p>
-      </div>
-      <div class="info-card">
-        <h3>Key Contract Addresses</h3>
-        <div class="code-block">[Chain]: 0x0000...0000</div>
-      </div>
-    </div>
-  </div>
 
 
   <!-- ============================================================
-       TAB 3: CORE FLOW / HOW IT WORKS
-       Step-by-step sequence of the primary operation.
-       ============================================================ -->
-  <div id="coreflow" class="section">
-    <h2>Core Flow</h2>
-    <p class="desc">Step-by-step sequence of the primary operation.</p>
-
-    <div class="seq">
-      <table class="seq-table">
-        <thead><tr><th style="width:5%;">#</th><th style="width:12%;">From</th><th style="width:10%;"></th><th style="width:12%;">To</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td>[Actor]</td><td>&rarr;</td><td>[Recipient]</td><td style="text-align:left;"><span class="seq-step">[function/action]</span><br><span class="seq-msg">[Description]</span></td></tr>
-          <tr><td>2</td><td>[Actor]</td><td>&rarr;</td><td>[Recipient]</td><td style="text-align:left;"><span class="seq-step">[function/action]</span><br><span class="seq-msg">[Description]</span></td></tr>
-          <tr><td>3</td><td>[Actor]</td><td>&rarr;</td><td>[Recipient]</td><td style="text-align:left;"><span class="seq-step">[function/action]</span><br><span class="seq-msg">[Description]</span></td></tr>
-          <tr><td colspan="5" style="padding:0.5rem;"><div class="seq-atomic">
-            <div style="text-align:center; color:#0ea5e9; font-size:0.72rem; font-weight:600; margin-bottom:0.3rem;">ATOMIC &mdash; All Steps Below Succeed or Entire Tx Reverts</div>
-            <table class="seq-table" style="margin:0;"><tbody>
-              <tr><td style="width:5%;">4</td><td style="width:12%;">[Actor]</td><td style="width:10%;">&rarr;</td><td style="width:12%;">[Recipient]</td><td style="text-align:left;"><span class="seq-step">[function]</span> <span class="seq-msg">[Description]</span></td></tr>
-              <tr><td>5</td><td>[Actor]</td><td>&rarr;</td><td>[Recipient]</td><td style="text-align:left;"><span class="seq-step">[function]</span> <span class="seq-msg">[Description]</span></td></tr>
-            </tbody></table>
-          </div></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-
-  <!-- ============================================================
-       TAB 4: MONEY MOVEMENT
-       How funds flow end-to-end.
-       ============================================================ -->
-  <div id="money" class="section">
-    <h2>Money Movement</h2>
-    <p class="desc">How funds flow end-to-end: on-ramps, off-ramps, settlement rails, stablecoin dependencies.</p>
-
-    <div class="flow">
-      <div class="node node-green"><b>[Source of Funds]</b>[Description]</div>
-      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
-      <div class="node node-blue"><b>[On-Ramp / Bridge]</b>[Description]</div>
-      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
-      <div class="node node-purple"><b>[Protocol / Pool]</b>[Description]</div>
-      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
-      <div class="node node-amber"><b>[Settlement]</b>[Description]</div>
-      <div class="conn"><div class="conn-line"></div><div class="conn-arrow-down"></div></div>
-      <div class="node node-green"><b>[Destination]</b>[Description]</div>
-    </div>
-
-    <div class="info-grid">
-      <div class="info-card">
-        <h3>Settlement Token</h3>
-        <p>[USDC / USDT / etc.]</p>
-      </div>
-      <div class="info-card">
-        <h3>Settlement Time</h3>
-        <p>[Time]</p>
-      </div>
-      <div class="info-card">
-        <h3>Custody Model</h3>
-        <p>[Self-custody / Custodian / Hybrid]</p>
-      </div>
-    </div>
-
-    <div class="callout callout-amber">
-      <div class="callout-title" style="color:#f59e0b;">&#9888; Custody Flag</div>
-      <div class="callout-text">[Flag any points where funds are custodied by a third party or where transparency is limited]</div>
-    </div>
-  </div>
-
-
-  <!-- ============================================================
-       TAB 5: ROLES & ACCESS CONTROL
-       Who controls what — admin keys, multisig, governance.
-       ============================================================ -->
-  <div id="roles" class="section">
-    <h2>Roles &amp; Access Control</h2>
-    <p class="desc">Who controls what &mdash; admin keys, multisig structures, governance, upgrade authority.</p>
-
-    <div class="prose">
-      <div class="highlight-box">
-        <p><strong>Key principle:</strong> [Summarize the role architecture — e.g., separation of powers, multi-sig requirements, etc.]</p>
-      </div>
-
-      <div class="role-card blue">
-        <h3>[Role Name — e.g., Protocol Administrator]</h3>
-        <p>[Brief description of role]</p>
-        <p class="can-do" style="margin-top:0.4rem;">&#10003; Can: [list capabilities]</p>
-        <p class="cant-do">&#10007; Cannot: [list restrictions]</p>
-      </div>
-
-      <div class="role-card green">
-        <h3>[Role Name — e.g., User / Borrower]</h3>
-        <p>[Brief description of role]</p>
-        <p class="can-do" style="margin-top:0.4rem;">&#10003; Can: [list capabilities]</p>
-        <p class="cant-do">&#10007; Cannot: [list restrictions]</p>
-      </div>
-
-      <div class="role-card purple">
-        <h3>[Role Name — e.g., Governance]</h3>
-        <p>[Brief description of role]</p>
-        <p class="can-do" style="margin-top:0.4rem;">&#10003; Can: [list capabilities]</p>
-        <p class="cant-do">&#10007; Cannot: [list restrictions]</p>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ============================================================
-       TAB 6: SECURITY & COMPLIANCE
-       Defense stack, regulatory posture, audit status.
-       ============================================================ -->
-  <div id="security" class="section">
-    <h2>Security &amp; Compliance</h2>
-    <p class="desc">Defense stack, regulatory posture, audit status, and custody model.</p>
-
-    <div class="sec-layers">
-      <div class="sec-layer"><div class="sec-num">1</div><div class="sec-content"><b>Regulatory Licensing</b><br><span>[Jurisdiction, license type, registration status]</span></div></div>
-      <div class="sec-layer"><div class="sec-num">2</div><div class="sec-content"><b>KYC / AML</b><br><span>[KYC provider, AML monitoring, sanctions screening approach]</span></div></div>
-      <div class="sec-layer"><div class="sec-num">3</div><div class="sec-content"><b>Smart Contract Security</b><br><span>[Audit firm(s), date of last audit, scope, findings]</span></div></div>
-      <div class="sec-layer"><div class="sec-num">4</div><div class="sec-content"><b>Custody Model</b><br><span>[How funds are held — self-custody, qualified custodian, MPC, etc.]</span></div></div>
-      <div class="sec-layer"><div class="sec-num">5</div><div class="sec-content"><b>Operational Security</b><br><span>[Multisig structure, key management, incident response]</span></div></div>
-      <div class="sec-layer"><div class="sec-num">6</div><div class="sec-content"><b>Insurance / Coverage</b><br><span>[Coverage details or "None identified"]</span></div></div>
-    </div>
-  </div>
-
-
-  <!-- ============================================================
-       TAB 7: COMPS & COMPETITORS
+       TAB: COMPS & COMPETITORS (Universal — Always third-to-last)
        Check /final-products/ first for previously reviewed entities.
        ============================================================ -->
   <div id="comps" class="section">
@@ -412,7 +390,78 @@
 
 
   <!-- ============================================================
-       TAB 8: RISK FACTORS & OPEN QUESTIONS
+       TAB: RECENT NEWS & DEVELOPMENTS (Universal — Always second-to-last)
+       Time-stamped feed of material developments.
+       Badge categories:
+         .badge-blue   → Product / Technical
+         .badge-green  → Business / Funding
+         .badge-amber  → Regulatory / Legal
+         .badge-red    → Risk Event
+       ============================================================ -->
+  <div id="news" class="section">
+    <h2>Recent News &amp; Developments</h2>
+    <p class="desc">Material developments from the past 6&ndash;12 months affecting partnership evaluation.</p>
+
+    <div class="seq">
+      <table class="seq-table">
+        <thead>
+          <tr><th style="width:12%;">Date</th><th style="width:14%;">Category</th><th>Headline</th><th style="width:30%;">Significance</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>[Mon YYYY]</td>
+            <td><span class="badge badge-green">Funding</span></td>
+            <td style="text-align:left;">[Headline — e.g., Series B raise of $XX M led by Investor]</td>
+            <td style="text-align:left;">[Why it matters for Valinor evaluation]</td>
+          </tr>
+          <tr>
+            <td>[Mon YYYY]</td>
+            <td><span class="badge badge-blue">Product</span></td>
+            <td style="text-align:left;">[Headline — e.g., Launched on Ethereum mainnet]</td>
+            <td style="text-align:left;">[Why it matters]</td>
+          </tr>
+          <tr>
+            <td>[Mon YYYY]</td>
+            <td><span class="badge badge-amber">Regulatory</span></td>
+            <td style="text-align:left;">[Headline — e.g., Received MiCA license in EU]</td>
+            <td style="text-align:left;">[Why it matters]</td>
+          </tr>
+          <tr>
+            <td>[Mon YYYY]</td>
+            <td><span class="badge badge-green">Business</span></td>
+            <td style="text-align:left;">[Headline — e.g., Partnership with Major Bank]</td>
+            <td style="text-align:left;">[Why it matters]</td>
+          </tr>
+          <tr>
+            <td>[Mon YYYY]</td>
+            <td><span class="badge badge-red">Risk Event</span></td>
+            <td style="text-align:left;">[Headline — e.g., Smart contract exploit on testnet]</td>
+            <td style="text-align:left;">[Impact and resolution status]</td>
+          </tr>
+          <tr>
+            <td>[Mon YYYY]</td>
+            <td><span class="badge badge-blue">Product</span></td>
+            <td style="text-align:left;">[Headline — e.g., V2 protocol upgrade deployed]</td>
+            <td style="text-align:left;">[Why it matters]</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose" style="margin-top:1rem;">
+      <h2>Trajectory Assessment</h2>
+      <p>[3-5 sentence narrative summarizing the overall direction: Is this entity on an upswing (accelerating growth, new licenses, expanding partnerships), steady state (maintaining position, incremental improvements), or showing warning signs (key departures, regulatory headwinds, security incidents)? Frame through Valinor's partnership lens.]</p>
+    </div>
+
+    <div class="callout callout-amber">
+      <div class="callout-title" style="color:#f59e0b;">&#9888; Verification Note</div>
+      <div class="callout-text">[Flag any news items that could not be independently verified or that rely on a single source]</div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       TAB: RISK FACTORS & OPEN QUESTIONS (Universal — Always last)
        ============================================================ -->
   <div id="risks" class="section">
     <h2>Risk Factors &amp; Open Questions</h2>

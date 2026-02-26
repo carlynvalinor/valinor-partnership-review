@@ -151,11 +151,55 @@ Use JavaScript `showTab()` function for tab switching. Each `.tab` button calls 
 
 ---
 
-## Required Tabs
+## Entity Classification & Tab Selection
 
-Include all tabs that are relevant. Skip those that aren't applicable. Add custom tabs as needed.
+Every entity falls into one of six categories. The category determines which tabs to include and which accent color to use. **Always classify the entity first, then select tabs accordingly.**
 
-### 1. Overview (Always first. Always required.)
+### Entity Types
+
+#### Type 1: Protocol / Smart Contract
+*Examples: Multiliquid, Aave, Morpho, Compound, Uniswap*
+- **Accent:** Purple (`#7c3aed`)
+- **Tabs:** Overview → Core Swap/Lending Flow → Smart Contract Architecture → Permission Hierarchy → Security Model → Data Structures & Fees → Event System → Comps → News → Risks
+- **Focus:** On-chain mechanics, contract interactions, upgrade authority, atomic transaction sequences
+
+#### Type 2: Infrastructure Platform
+*Examples: Bridge/Stripe, Circle Mint, Fireblocks, Plaid*
+- **Accent:** Blue/Cyan (`#0ea5e9`)
+- **Tabs:** Overview → Platform Architecture → Orchestration Flow → API & Integration → Money Movement → Custody of Funds → Security & Compliance → Comps → News → Risks
+- **Focus:** API surface, settlement rails, SLAs, regulatory licensing, fiat↔crypto bridging
+
+#### Type 3: Asset Issuer / Tokenizer
+*Examples: Securitize, Centrifuge, Ondo Finance, Backed Finance*
+- **Accent:** Amber (`#f59e0b`)
+- **Tabs:** Overview → Issuance Architecture → Asset Lifecycle → Underlying Assets → Legal Structure → Redemption & Liquidity → Compliance Framework → Comps → News → Risks
+- **Focus:** What's being tokenized, SPV/trust structure, NAV methodology, redemption mechanics, reg status
+
+#### Type 4: Lending / Credit Protocol
+*Examples: Maple Finance, Goldfinch, Clearpool, TrueFi*
+- **Accent:** Green (`#10b981`)
+- **Tabs:** Overview → Lending Architecture → Loan Lifecycle → Credit Assessment → Pool Structure & Terms → Money Movement → Default & Recovery → Comps → News → Risks
+- **Focus:** Underwriting process, pool mechanics, default handling, real yield vs token incentives, credit quality
+
+#### Type 5: Stablecoin Issuer
+*Examples: Circle (USDC), Paxos (USDP/PYUSD), Agora (AUSD), Tether*
+- **Accent:** Blue/Cyan (`#0ea5e9`)
+- **Tabs:** Overview → Issuance & Redemption → Reserve Composition → Attestation & Transparency → Regulatory Framework → Chain Deployments → Mint/Burn Mechanics → Comps → News → Risks
+- **Focus:** Reserve backing, attestation frequency, regulatory status, mint/burn controls, depegging risk
+
+#### Type 6: Wallet / Custody Provider
+*Examples: Anchorage Digital, BitGo, Fireblocks, Safe (Gnosis Safe)*
+- **Accent:** Teal (`#14b8a6`)
+- **Tabs:** Overview → Custody Architecture → Key Management → Policy Engine → Supported Assets & Chains → Insurance & Liability → Compliance & Licensing → Comps → News → Risks
+- **Focus:** Key management model (MPC, HSM, multisig), insurance coverage, SOC2/SOC1 status, signing policies
+
+---
+
+### Universal Tabs (All Entity Types)
+
+These tabs appear in **every** review regardless of entity type:
+
+#### Overview (Always Tab 1)
 - **Purpose:** Non-technical explainer accessible to anyone on the team
 - Start with a `.highlight-box` containing a one-sentence summary
 - Cover:
@@ -166,42 +210,89 @@ Include all tabs that are relevant. Skip those that aren't applicable. Add custo
   - Regulatory status
   - Big-picture thesis: relevance to Valinor
 
-### 2. Tech Stack / Architecture
-- Platform modules, smart contract architecture, infrastructure dependencies, chain support
-- Use `.flow` diagrams with grouped `.node-*` boxes
-- Note: audited vs. unaudited components
-
-### 3. Core Flow / How It Works
-- Step-by-step sequence of the primary operation (loan origination, swap, payment, etc.)
-- Use `.seq-table` sequence diagrams
-- Include an atomic transaction box where applicable (what happens in a single on-chain tx)
-
-### 4. Money Movement
-- How funds flow end-to-end: on-ramps/off-ramps, settlement rails, stablecoin dependencies, fiat bridges, payment waterfalls
-- Use `.flow` diagrams
-- Flag any points where funds are custodied by a third party
-
-### 5. Roles & Access Control
-- Who controls what
-- Use `.role-card` blocks showing `✅ can-do` and `❌ cannot-do` for each role
-- Cover: admin keys, multisig structures, governance, upgrade authority, treasury control
-- Flag centralization risks
-
-### 6. Security & Compliance
-- Use `.sec-layers` numbered defense stack
-- Cover: regulatory licensing, KYC/AML approach, smart contract security (audits), custody model, insurance/coverage, audit status
-- Note any gaps or pending items
-
-### 7. Comps & Competitors
+#### Comps & Competitors (Always second-to-last before News)
 - **First check `/final-products/` for any previously reviewed entities that are relevant comps** — reference them directly
 - Comparison table (`.seq-table` with `.badge-*` status pills) across key dimensions
 - Then prose analysis of competitive moat and positioning
 - Use `.role-card` blocks for detailed competitor profiles if helpful
 
-### 8. Risk Factors & Open Questions
+#### Recent News & Developments (Always second-to-last)
+- **Purpose:** Time-stamped feed of material developments that affect partnership evaluation
+- Use `.seq-table` with columns: **Date**, **Category**, **Headline**, **Significance**
+- **Categories** (use `.badge-*` pills):
+  - `.badge-blue` — Product / Technical (launches, upgrades, chain deployments)
+  - `.badge-green` — Business (partnerships, integrations, customer wins)
+  - `.badge-amber` — Regulatory / Legal (licensing, enforcement, compliance changes)
+  - `.badge-red` — Risk Event (hacks, exploits, outages, key departures)
+  - Use a fifth style for Funding: `.badge-green` with "Funding" label
+- **Content guidance:**
+  - Include **6–12 items** spanning the most recent 6–12 months
+  - Prioritize events that affect creditworthiness, operational risk, or partnership viability
+  - Include funding rounds with amount, lead investor, and valuation if known
+  - Include key leadership changes (CEO, CTO, CFO, GC)
+  - Note any regulatory actions, lawsuits, or enforcement proceedings
+  - Include major product launches, chain deployments, or protocol upgrades
+  - Flag any security incidents, hacks, or exploit events
+- After the table, include a `.prose` section with a **brief narrative** (3–5 sentences) summarizing the overall trajectory: Is this entity on an upswing, steady state, or showing warning signs?
+- Use `.callout-amber` for any news items that couldn't be independently verified
+
+#### Risk Factors & Open Questions (Always last tab)
 - Smart contract risk, counterparty risk, regulatory risk, key-person risk, concentration risk, dependency risk
 - Use `.callout-red` for high severity, `.callout-amber` for medium
 - **End with a list of recommended diligence follow-up questions** for the team
+
+---
+
+### Type-Specific Tab Guidance
+
+The middle tabs (between Overview and Comps) are where entity types diverge. Here's detailed guidance for the most common tabs:
+
+#### Tech Stack / Architecture
+- Platform modules, smart contract architecture, infrastructure dependencies, chain support
+- Use `.flow` diagrams with grouped `.node-*` boxes
+- Note: audited vs. unaudited components
+
+#### Core Flow / How It Works
+- Step-by-step sequence of the primary operation (loan origination, swap, payment, etc.)
+- Use `.seq-table` sequence diagrams
+- Include an atomic transaction box where applicable (what happens in a single on-chain tx)
+
+#### Money Movement
+- How funds flow end-to-end: on-ramps/off-ramps, settlement rails, stablecoin dependencies, fiat bridges, payment waterfalls
+- Use `.flow` diagrams
+- Flag any points where funds are custodied by a third party
+
+#### Roles & Access Control
+- Who controls what
+- Use `.role-card` blocks showing `✅ can-do` and `❌ cannot-do` for each role
+- Cover: admin keys, multisig structures, governance, upgrade authority, treasury control
+- Flag centralization risks
+
+#### Security & Compliance
+- Use `.sec-layers` numbered defense stack
+- Cover: regulatory licensing, KYC/AML approach, smart contract security (audits), custody model, insurance/coverage, audit status
+- Note any gaps or pending items
+
+#### Underlying Assets (Asset Issuers)
+- What real-world assets back the tokens
+- Use `.info-grid` with `.info-card` panels for asset class breakdown
+- Include: asset type, jurisdiction, average maturity, credit quality, concentration
+
+#### Loan Lifecycle (Lending Protocols)
+- Origination → funding → servicing → repayment → default handling
+- Use `.seq-table` for the full lifecycle
+- Note automated vs. manual steps
+
+#### Reserve Composition (Stablecoin Issuers)
+- Detailed breakdown of reserve assets
+- Use `.fee-table` for asset allocation percentages
+- Include: T-bills, bank deposits, repo, commercial paper, etc.
+- Note attestation provider and frequency
+
+#### Key Management (Custody Providers)
+- MPC, HSM, multisig, or hybrid architecture
+- Use `.flow` diagrams for signing flow
+- Note: threshold requirements, geographic distribution, recovery procedures
 
 ---
 
@@ -236,11 +327,12 @@ The base HTML template is in `/templates/partnership-review-template.html`. Use 
 
 1. **Check final-products/** — Read existing reviews in `/final-products/` to identify relevant comps, cross-references, or design patterns
 2. **Receive input** about an entity (files, links, verbal description)
-3. **Research** — Use available tools (web search, blockchain explorers, document reading) to gather comprehensive information
-4. **Draft** the HTML document using the template
-5. **Flag gaps** — Explicitly mark anything you couldn't verify or find
-6. **Save** to `/output/[EntityName]_PartnershipReview_YYYYMMDD.html`
-7. **Summarize** — Provide a brief text summary of key findings and open questions to the user
+3. **Classify entity type** — Determine which of the 6 entity types best fits (Protocol, Infrastructure, Asset Issuer, Lending/Credit, Stablecoin, Wallet/Custody) and select the corresponding tab set and accent color
+4. **Research** — Use available tools (web search, blockchain explorers, document reading) to gather comprehensive information. Actively search for recent news, funding rounds, leadership changes, and regulatory developments for the News tab.
+5. **Draft** the HTML document using the template — add/remove tabs per the entity type classification, keeping Overview first, News second-to-last, and Risks last
+6. **Flag gaps** — Explicitly mark anything you couldn't verify or find
+7. **Save** to `/output/[EntityName]_PartnershipReview_YYYYMMDD.html`
+8. **Summarize** — Provide a brief text summary of key findings and open questions to the user
 
 ---
 
